@@ -1,0 +1,69 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "routes": [
+    {
+      "src": "/admin",
+      "dest": "/admin.html"
+    },
+    {
+      "src": "/api/lookbook",
+      "dest": "/lookbook.json"
+    },
+    {
+      "src": "/api/catalogo",
+      "dest": "/catalogo.json"
+    },
+    {
+      "src": "/api/noticias",
+      "dest": "/noticias.json"
+    },
+    {
+      "src": "/api/news",
+      "dest": "/noticias.json"
+    },
+    {
+      "src": "/api/reseñas",
+      "dest": "/reseñas.json"
+    },
+    {
+      "src": "/api/resenas",
+      "dest": "/reseñas.json"
+    },
+    {
+      "src": "/api/faq",
+      "dest": "/faq.json"
+    },
+    {
+      "src": "/api/pedidos",
+      "dest": "/pedidos.json"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        }
+      ]
+    }
+  ]
+}
