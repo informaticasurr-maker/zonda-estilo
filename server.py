@@ -22,7 +22,8 @@ RESEÑAS_JSON_PATH = os.path.join(BASE_DIR, "reseñas.json")
 PEDIDOS_JSON_PATH = os.path.join(BASE_DIR, "pedidos.json")
 FAQ_JSON_PATH = os.path.join(BASE_DIR, "faq.json")
 
-ADMIN_PASSWORD_HASH = hashlib.sha256("Zonda202610".encode('utf-8')).hexdigest()
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "Zonda202610")
+ADMIN_PASSWORD_HASH = hashlib.sha256(ADMIN_PASSWORD.encode('utf-8')).hexdigest()
 ACTIVE_ADMIN_SESSIONS = set()
 
 os.makedirs(NEWS_DIR, exist_ok=True)
@@ -130,7 +131,17 @@ class ZondaHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.send_header('Pragma', 'no-cache')
         self.send_header('Expires', '0')
+        self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header('X-Frame-Options', 'SAMEORIGIN')
+        self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
         super().end_headers()
+
+    def is_authenticated(self, data):
+        auth_header = self.headers.get('Authorization', '')
+        token = data.get('token', '') if isinstance(data, dict) else ''
+        if auth_header.startswith('Bearer '):
+            token = auth_header.split(' ', 1)[1].strip()
+        return bool(token and token in ACTIVE_ADMIN_SESSIONS)
 
     def do_GET(self):
         req_path = unquote(self.path)
@@ -166,6 +177,23 @@ class ZondaHandler(http.server.SimpleHTTPRequestHandler):
         except:
             self.send_error(400, "Bad Request")
             return
+
+        # Rutas administrativas que requieren sesión activa de administrador
+        ADMIN_MUTATION_ROUTES = {
+            '/api/upload_lookbook', '/api/lookbook/update', '/api/lookbook/delete',
+            '/api/upload_catalogo', '/api/catalogo/update', '/api/catalogo/delete',
+            '/api/upload_noticias', '/api/news', '/api/noticias/update', '/api/noticias/delete',
+            '/api/reseñas/update', '/api/resenas/update', '/api/reseñas/delete', '/api/resenas/delete',
+            '/api/faq/add', '/api/faq/update', '/api/faq/delete'
+        }
+
+        if req_path in ADMIN_MUTATION_ROUTES:
+            if not self.is_authenticated(data):
+                self.send_response(401)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'success': False, 'error': 'No autorizado. Se requiere token de administrador válido.'}).encode('utf-8'))
+                return
 
         try:
             if req_path == '/api/login':
@@ -213,7 +241,7 @@ class ZondaHandler(http.server.SimpleHTTPRequestHandler):
             else:
                 self.send_error(404, "Not Found")
         except Exception as e:
-            self.send_error_json(str(e))
+            self.send_error_json("Error interno al procesar la solicitud")
 
     def handle_login(self, data):
         pwd = data.get('password', '')

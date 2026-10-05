@@ -24,6 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    function escapeHTML(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     async function refreshNoticias() {
         try {
             const res = await fetch('/api/noticias?_t=' + Date.now());
@@ -32,20 +42,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!grid) return;
 
             if (!data || data.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1;">No hay noticias o promociones activas por el momento.</p>';
+                const emptyMsg = document.createElement('p');
+                emptyMsg.style.cssText = 'color: var(--text-secondary); grid-column: 1/-1;';
+                emptyMsg.textContent = 'No hay noticias o promociones activas por el momento.';
+                grid.replaceChildren(emptyMsg);
                 return;
             }
 
             grid.innerHTML = data.map(item => {
                 let mediaHtml = '';
                 if (item.media) {
+                    const safeSrc = encodeURI(item.media);
                     if (item.media_type && item.media_type.includes('video')) {
-                        mediaHtml = `<div class="news-media"><video src="${item.media}" autoplay loop muted playsinline style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></video></div>`;
+                        mediaHtml = `<div class="news-media"><video src="${safeSrc}" autoplay loop muted playsinline style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></video></div>`;
                     } else {
-                        mediaHtml = `<div class="news-media"><img src="${item.media}" alt="Noticia Zonda" loading="lazy" style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></div>`;
+                        mediaHtml = `<div class="news-media"><img src="${safeSrc}" alt="Noticia Zonda" loading="lazy" style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></div>`;
                     }
                 }
-                let textHtml = item.text ? `<div class="news-body" style="padding: 22px;"><p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin:0;">${item.text}</p></div>` : '';
+                const safeText = escapeHTML(item.text);
+                let textHtml = safeText ? `<div class="news-body" style="padding: 22px;"><p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin:0;">${safeText}</p></div>` : '';
                 return `<article class="news-card visible">${mediaHtml}${textHtml}</article>`;
             }).join('');
         } catch(e) {}
@@ -190,20 +205,26 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!grid) return;
 
             if (!data || data.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1; text-align: center;">Aún no hay reseñas publicadas. ¡Sé el primero en opinar!</p>';
+                const emptyMsg = document.createElement('p');
+                emptyMsg.style.cssText = 'color: var(--text-secondary); grid-column: 1/-1; text-align: center;';
+                emptyMsg.textContent = 'Aún no hay reseñas publicadas. ¡Sé el primero en opinar!';
+                grid.replaceChildren(emptyMsg);
                 return;
             }
 
             grid.innerHTML = data.map(item => {
+                const safeName = escapeHTML(item.name || 'Anónimo');
+                const safeDate = escapeHTML(item.date || 'Reciente');
+                const safeComment = escapeHTML(item.comment || '');
                 const stars = '★'.repeat(item.rating || 5) + '☆'.repeat(5 - (item.rating || 5));
                 return `
                     <article class="review-card">
                         <div class="review-author-info">
-                            <span class="review-author-name">${item.name || 'Anónimo'}</span>
-                            <span class="review-date">${item.date || 'Reciente'}</span>
+                            <span class="review-author-name">${safeName}</span>
+                            <span class="review-date">${safeDate}</span>
                         </div>
                         <div class="stars-gold">${stars}</div>
-                        <p class="review-comment">"${item.comment}"</p>
+                        <p class="review-comment">"${safeComment}"</p>
                     </article>
                 `;
             }).join('');
