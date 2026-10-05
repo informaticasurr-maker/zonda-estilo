@@ -1,0 +1,24 @@
+[
+    {
+        "id": "ped_7d3018",
+        "product_title": "Remera Zonda (Lookbook)",
+        "product_price": "Precio a consultar",
+        "buyer_name": "digogo",
+        "buyer_phone": "2804880269",
+        "buyer_size": "M",
+        "buyer_address": "No especificada / A convenir",
+        "buyer_notes": "Sin observaciones",
+        "timestamp": "218c7032"
+    },
+    {
+        "id": "ped_53f0d8",
+        "product_title": "Remera Zonda Test",
+        "product_price": "0.000",
+        "buyer_name": "Carlos",
+        "buyer_phone": "2615554433",
+        "buyer_size": "L",
+        "buyer_address": "Mendoza",
+        "buyer_notes": "",
+        "timestamp": "a7df73d5"
+    }
+]

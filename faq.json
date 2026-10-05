@@ -1,0 +1,37 @@
+[
+    {
+        "id": "faq_001",
+        "icon": "\ud83d\udccf",
+        "title": "Talles y Gu\u00eda de Medidas",
+        "category": "Medidas",
+        "content": "Nuestras remeras y buzos cuentan con corte <strong>Oversize Streetwear</strong> y <strong>Regular Fit Premium</strong>.<br><table class=\"size-table\"><thead><tr><th>Talle</th><th>Ancho (Sisa)</th><th>Largo Total</th></tr></thead><tbody><tr><td>S</td><td>52 cm</td><td>70 cm</td></tr><tr><td>M</td><td>55 cm</td><td>73 cm</td></tr><tr><td>L</td><td>58 cm</td><td>76 cm</td></tr><tr><td>XL</td><td>61 cm</td><td>78 cm</td></tr><tr><td>XXL</td><td>64 cm</td><td>81 cm</td></tr></tbody></table><p class=\"faq-note\">\ud83d\udca1 <em>Tip: Si te gusta el estilo holgado oversize, eleg\u00ed tu talle habitual. Si prefer\u00eds un calce al cuerpo, pod\u00e9s elegir un talle menos.</em></p>"
+    },
+    {
+        "id": "faq_002",
+        "icon": "\u2728",
+        "title": "Calidad de la Tela y Confecci\u00f3n",
+        "category": "Calidad",
+        "content": "Utilizamos exclusivamente <strong>Algod\u00f3n 100% Peinado Premium 24/1</strong> de alta densidad.<br>\u2022 <strong>Textura ultra suave:</strong> Confort superior al tacto y respirabilidad total.<br>\u2022 <strong>Pre-encogido:</strong> Lavadas en proceso industrial para evitar deformaciones o cambios de talle.<br>\u2022 <strong>Estampar\u00eda HD:</strong> Tinta textil DTG y Serigraf\u00eda Plastisol de alta durabilidad que no se cuartea ni pierde color.<br>\u2022 <strong>Costuras reforzadas:</strong> Cuello con tapa costura de hombro a hombro y doble atracado en mangas y ruedos."
+    },
+    {
+        "id": "faq_003",
+        "icon": "\ud83d\udd52",
+        "title": "Horarios de Citas y Showroom",
+        "category": "Atenci\u00f3n",
+        "content": "Brindamos atenci\u00f3n personalizada en nuestro Showroom exclusivo para que te pruebes todas nuestras prendas con tranquilidad.<br><br><strong>Horarios de atenci\u00f3n con cita previa:</strong><br>\ud83d\udcc5 <strong>Lunes a Viernes:</strong> 10:00 hs a 19:00 hs<br>\ud83d\udcc5 <strong>S\u00e1bados:</strong> 10:00 hs a 14:00 hs<br><br>Para agendar tu cita, escribinos directamente por WhatsApp haciendo clic en el bot\u00f3n del men\u00fa lateral."
+    },
+    {
+        "id": "faq_004",
+        "icon": "\ud83d\udccd",
+        "title": "Ubicaci\u00f3n y Env\u00edos",
+        "category": "Env\u00edos",
+        "content": "\ud83d\udccd <strong>Ubicaci\u00f3n:</strong> Mendoza, Argentina.<br>\ud83d\ude9a <strong>Env\u00edos:</strong> Realizamos env\u00edos a todo el pa\u00eds a trav\u00e9s de Correo Argentino y transportes expr\u00e9s. Para Mendoza capital y alrededores contamos con entrega inmediata por mensajer\u00eda en el d\u00eda."
+    },
+    {
+        "id": "faq_810db1",
+        "icon": "\ud83d\udcb3",
+        "title": "Medios de Pago Aceptados",
+        "category": "Pagos",
+        "content": "Aceptamos Transferencia bancaria (10% de descuento), MercadoPago, tarjetas de cr\u00e9dito y efectivo en showroom."
+    }
+]

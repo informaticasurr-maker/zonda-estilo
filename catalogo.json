@@ -1,0 +1,374 @@
+[
+    {
+        "id": "cat_efd890",
+        "src": "fotos/zonda_cat_7b788133.webp",
+        "title": "oferta",
+        "price": "$25.000"
+    },
+    {
+        "id": "cat_0",
+        "src": "fotos/photo_2026-10-01_14-28-26%20%286%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_1",
+        "src": "fotos/photo_2026-10-01_14-28-26%20%287%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_2",
+        "src": "fotos/photo_2026-10-01_14-28-26%20%288%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_3",
+        "src": "fotos/photo_2026-10-01_14-28-26%20%289%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_4",
+        "src": "fotos/photo_2026-10-01_14-28-27%20%282%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_5",
+        "src": "fotos/photo_2026-10-01_14-28-27%20%284%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_6",
+        "src": "fotos/photo_2026-10-01_14-28-27%20%285%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_7",
+        "src": "fotos/photo_2026-10-01_14-28-27%20%287%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_8",
+        "src": "fotos/photo_2026-10-01_14-28-27%20%289%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_9",
+        "src": "fotos/photo_2026-10-01_14-28-27.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_10",
+        "src": "fotos/photo_2026-10-01_14-28-28%20%283%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_11",
+        "src": "fotos/photo_2026-10-01_14-28-28%20%284%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_12",
+        "src": "fotos/photo_2026-10-01_14-28-28%20%285%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_13",
+        "src": "fotos/photo_2026-10-01_14-28-28%20%286%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_14",
+        "src": "fotos/photo_2026-10-01_14-28-28%20%287%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_15",
+        "src": "fotos/photo_2026-10-01_14-28-29%20%2810%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_16",
+        "src": "fotos/photo_2026-10-01_14-28-29%20%2811%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_17",
+        "src": "fotos/photo_2026-10-01_14-28-29%20%2812%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_18",
+        "src": "fotos/photo_2026-10-01_14-28-29%20%282%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_19",
+        "src": "fotos/photo_2026-10-01_14-28-29%20%283%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_20",
+        "src": "fotos/photo_2026-10-01_14-28-29%20%284%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_21",
+        "src": "fotos/photo_2026-10-01_14-28-29%20%286%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_22",
+        "src": "fotos/photo_2026-10-01_14-28-29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_23",
+        "src": "fotos/photo_2026-10-01_14-28-30%20%2810%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_24",
+        "src": "fotos/photo_2026-10-01_14-28-30%20%2811%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_25",
+        "src": "fotos/photo_2026-10-01_14-28-30%20%285%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_26",
+        "src": "fotos/photo_2026-10-01_14-28-30%20%287%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_27",
+        "src": "fotos/photo_2026-10-01_14-28-30%20%288%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_28",
+        "src": "fotos/photo_2026-10-01_14-28-30%20%289%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_29",
+        "src": "fotos/photo_2026-10-01_14-28-31%20%283%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_30",
+        "src": "fotos/photo_2026-10-01_14-28-31%20%284%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_31",
+        "src": "fotos/photo_2026-10-01_14-28-31%20%285%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_32",
+        "src": "fotos/photo_2026-10-01_14-28-31%20%286%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_33",
+        "src": "fotos/photo_2026-10-01_14-28-31%20%287%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_34",
+        "src": "fotos/photo_2026-10-01_14-28-31.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_35",
+        "src": "fotos/photo_2026-10-01_14-28-32%20%2810%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_36",
+        "src": "fotos/photo_2026-10-01_14-28-32%20%282%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_37",
+        "src": "fotos/photo_2026-10-01_14-28-32%20%283%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_38",
+        "src": "fotos/photo_2026-10-01_14-28-32%20%285%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_39",
+        "src": "fotos/photo_2026-10-01_14-28-32%20%286%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_40",
+        "src": "fotos/photo_2026-10-01_14-28-32%20%288%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_41",
+        "src": "fotos/photo_2026-10-01_14-28-32%20%289%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_42",
+        "src": "fotos/photo_2026-10-01_14-28-32.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_43",
+        "src": "fotos/photo_2026-10-01_14-28-33%20%282%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_44",
+        "src": "fotos/photo_2026-10-01_14-28-33%20%283%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_45",
+        "src": "fotos/photo_2026-10-01_14-28-33%20%284%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_46",
+        "src": "fotos/photo_2026-10-01_14-28-33%20%285%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_47",
+        "src": "fotos/photo_2026-10-01_14-28-33.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_48",
+        "src": "fotos/photo_2026-10-01_14-28-34%20%282%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_49",
+        "src": "fotos/photo_2026-10-01_14-28-34%20%283%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_50",
+        "src": "fotos/photo_2026-10-01_14-28-34%20%284%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_51",
+        "src": "fotos/photo_2026-10-01_14-28-34%20%285%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_52",
+        "src": "fotos/photo_2026-10-01_14-28-34%20%289%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_53",
+        "src": "fotos/photo_2026-10-01_14-28-34.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_54",
+        "src": "fotos/photo_2026-10-01_14-28-35%20%282%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_55",
+        "src": "fotos/photo_2026-10-01_14-28-35%20%283%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_57",
+        "src": "fotos/photo_2026-10-01_14-28-35%20%285%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_58",
+        "src": "fotos/photo_2026-10-01_14-28-35%20%286%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_59",
+        "src": "fotos/photo_2026-10-01_14-28-35.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    },
+    {
+        "id": "cat_60",
+        "src": "fotos/photo_2026-10-01_14-28-36%20%282%29.webp",
+        "title": "Buzo Zonda",
+        "price": "$60.000"
+    },
+    {
+        "id": "cat_61",
+        "src": "fotos/photo_2026-10-01_14-28-36%20%283%29.webp",
+        "title": "Remera Zonda",
+        "price": "$30.000"
+    }
+]

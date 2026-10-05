@@ -1,0 +1,29 @@
+{
+  "negocio": {
+    "nombre": "Zonda",
+    "rubro": "Indumentaria",
+    "contacto": {
+      "whatsapp": "2617462601",
+      "instagram": "https://www.instagram.com/p/DX7i5EjifFL/?stkn=bHd0ZnBjdHl5MW1z"
+    },
+    "ubicacion": {
+      "provincia": "Mendoza",
+      "pais": "Argentina"
+    }
+  },
+  "productos": [
+    {
+      "categoria": "Remeras",
+      "precio": 30000
+    },
+    {
+      "categoria": "Buzos",
+      "precio": 60000
+    }
+  ],
+  "requerimientos_ui": {
+    "columnas": 2,
+    "pestañas": ["Catálogo", "Lookbook (Modelos)"],
+    "modulos": ["Banner tipo Historias"]
+  }
+}

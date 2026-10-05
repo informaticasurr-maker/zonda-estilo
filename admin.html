@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zonda - Panel de Administración</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --surface-color: rgba(15, 15, 15, 0.7);
+            --surface-solid: #111111;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --accent-color: #ffffff;
+            --danger-color: #dc2743;
+            --whatsapp-color: #25D366;
+        }
+        * { box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { 
+            margin: 0; padding: 40px; 
+            background: radial-gradient(circle at top right, #1a1a1a 0%, #050505 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Login Overlay */
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 5, 5, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        .login-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .login-card p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
+        h1 { text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 100%; width: 100%; padding: 0 20px; margin: 0 auto; }
+        .card {
+            background-color: var(--surface-color);
+            backdrop-filter: blur(25px);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        h2 { font-weight: 400; font-size: 1.2rem; margin-top: 0; color: var(--accent-color); text-transform: uppercase; letter-spacing: 1px;}
+        input[type="file"], input[type="text"], input[type="password"], select { margin-bottom: 15px; color: var(--text-secondary); width: 100%; }
+        input[type="text"], input[type="password"], select {
+            padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); 
+            color: #fff; border-radius: 8px; outline: none; font-size: 0.95rem;
+        }
+        select option { background: #111; color: #fff; }
+        textarea { 
+            width: 100%; height: 100px; padding: 12px; background: rgba(0,0,0,0.5); 
+            border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; margin-bottom: 15px;
+            font-family: inherit; font-size: 0.95rem; outline: none;
+        }
+        button {
+            background: #fff; color: #000; border: none; padding: 12px 24px;
+            border-radius: 30px; font-weight: 700; cursor: pointer; text-transform: uppercase;
+            transition: all 0.3s; font-size: 0.85rem; letter-spacing: 1px;
+        }
+        button:hover { background: #ccc; }
+        button.danger { background: transparent; color: var(--danger-color); border: 1px solid var(--danger-color); }
+        button.danger:hover { background: rgba(220, 39, 67, 0.15); }
+        
+        .btn-logout { background: transparent; color: #888; border: 1px solid #444; font-size: 0.75rem; padding: 6px 14px; }
+        .btn-logout:hover { color: #fff; border-color: #fff; background: transparent; }
+
+        .alert { padding: 15px; border-radius: 8px; margin-top: 15px; display: none; }
+        .alert.success { background: rgba(37, 211, 102, 0.2); border: 1px solid #25D366; color: #25D366; }
+        .alert.error { background: rgba(220, 39, 67, 0.2); border: 1px solid #dc2743; color: #dc2743; }
+        
+        /* Grid */
+        .admin-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px;
+        }
+        .admin-item {
+            background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px; overflow: hidden; padding: 16px; display: flex; flex-direction: column; gap: 10px;
+        }
+        .admin-item img { width: 100%; height: 220px; object-fit: cover; border-radius: 8px; }
+        .admin-item-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: auto; }
+        .admin-item-actions button { padding: 8px 14px; flex: 1; text-align: center; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab { background: rgba(255,255,255,0.1); color: #fff; padding: 10px 20px; cursor: pointer; border-radius: 30px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .tab.active { background: #fff; color: #000; font-weight: bold; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla de Login -->
+    <div id="loginOverlay" class="login-overlay">
+        <div class="login-card">
+            <h2>Acceso Admin</h2>
+            <p>Ingresá la contraseña de administrador para gestionar la tienda</p>
+            <form id="formLogin" onsubmit="handleLogin(event)">
+                <input type="password" id="adminPasswordInput" placeholder="Contraseña de Administrador..." required autocomplete="current-password">
+                <button type="submit" style="width: 100%; margin-top: 10px; padding: 14px;">Ingresar al Panel</button>
+                <div id="loginAlert" class="alert error" style="margin-top: 15px;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Panel de Administración -->
+    <div id="adminDashboard" class="container" style="display: none;">
+        <h1>
+            <span>Zonda Admin</span>
+            <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
+        </h1>
+        <p style="color: var(--text-secondary); margin-bottom: 30px;">Panel de control interno de Zonda Streetwear</p>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('lookbook')">Lookbook</div>
+            <div class="tab" onclick="switchTab('catalogo')">Catálogo</div>
+            <div class="tab" onclick="switchTab('noticias')">Noticias</div>
+            <div class="tab" onclick="switchTab('faq')">Preguntas Frecuentes</div>
+            <div class="tab" onclick="switchTab('reseñas')">Reseñas</div>
+        </div>
+
+        <!-- TAB LOOKBOOK -->
+        <div id="tab_lookbook" class="tab-content active">
+            <div class="card">
+                <h2>Subir Nueva Foto al Lookbook</h2>
+                <p style="font-size: 0.9rem; color: #999;">Se optimizará a WebP de alta calidad.</p>
+                <input type="file" id="lookbookFile" accept="image/jpeg, image/png, image/webp">
+                <input type="text" id="lookbookDesc" placeholder="Descripción opcional de la foto...">
+                <br>
+                <button onclick="uploadPhoto('lookbook')">Subir al Lookbook</button>
+                <div id="alert_lookbook" class="alert"></div>
+            </div>
+
+            <div class="card">
+                <h2>Gestionar Lookbook Existente</h2>
+                <div id="gallery_lookbook" class="admin-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB CATALOGO -->
+        <div id="tab_catalogo" class="tab-content">
+            <div class="card">
+                <h2>Subir Nueva Prenda al Catálogo</h2>
+                <input type="file" id="catalogoFile" accept="image/jpeg, image/png, image/webp">
+                <input type="text" id="catalogoTitle" placeholder="Título (Ej: Remera Zonda Oversize)">
+                <input type="text" id="catalogoPrice" placeholder="Precio (Ej: $30.000)">
+                <br>
+                <button onclick="uploadPhoto('catalogo')">Subir al Catálogo</button>
+                <div id="alert_catalogo" class="alert"></div>
+            </div>
+
+            <div class="card">
+                <h2>Gestionar Catálogo Existente</h2>
+                <div id="gallery_catalogo" class="admin-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB NOTICIAS -->
+        <div id="tab_noticias" class="tab-content">
+            <div class="card">
+                <h2>Publicar Nueva Noticia / Promoción</h2>
+                <p style="font-size: 0.9rem; color: #999;">Este contenido aparecerá en la sección Noticias & Promos de la tienda.</p>
+                <textarea id="newsText" placeholder="Ej: ¡Llegó la nueva temporada Zonda! 20% OFF en efectivo..."></textarea>
+                <p style="font-size: 0.9rem; color: #999; margin-top: 15px;">Archivo multimedia opcional (Foto o Video):</p>
+                <input type="file" id="newsMedia" accept="image/*, video/mp4, video/webm">
+                <br>
+                <button onclick="updateNews()">Publicar Noticia</button>
+                <div id="alert_news" class="alert"></div>
+            </div>
+
+            <div class="card">
+                <h2>Gestionar Noticias Existentes</h2>
+                <div id="gallery_noticias" class="admin-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB PREGUNTAS FRECUENTES (FAQ) -->
+        <div id="tab_faq" class="tab-content">
+            <div class="card">
+                <h2>Agregar Nueva Pregunta Frecuente</h2>
+                <div style="display: grid; grid-template-columns: 100px 1fr 1fr; gap: 15px;">
+                    <div>
+                        <label style="font-size:0.8rem; color:#888;">Ícono Emoji</label>
+                        <input type="text" id="faqIcon" placeholder="Ej: 📏" value="❓">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; color:#888;">Título de la Pregunta</label>
+                        <input type="text" id="faqTitle" placeholder="Ej: Formas de Pago">
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; color:#888;">Categoría</label>
+                        <input type="text" id="faqCategory" placeholder="Ej: Pagos" value="General">
+                    </div>
+                </div>
+                <label style="font-size:0.8rem; color:#888;">Respuesta / Contenido (Acepta HTML básico)</label>
+                <textarea id="faqContent" placeholder="Escribí aquí la respuesta detallada de tu negocio..." style="height: 120px;"></textarea>
+                <button onclick="addFaqItem()">Guardar Pregunta Frecuente</button>
+                <div id="alert_faq" class="alert"></div>
+            </div>
+
+            <div class="card">
+                <h2>Gestionar Preguntas Frecuentes Existentes</h2>
+                <div id="gallery_faq" class="admin-grid"></div>
+            </div>
+        </div>
+
+        <!-- TAB RESEÑAS -->
+        <div id="tab_reseñas" class="tab-content">
+            <div class="card">
+                <h2>Gestionar Reseñas de Clientes</h2>
+                <p style="font-size: 0.9rem; color: #999;">Podés editar o eliminar las opiniones de compradores publicadas en la tienda.</p>
+                <div id="gallery_reseñas" class="admin-grid"></div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="/" style="color: var(--text-secondary); text-decoration: none;">Volver a la tienda</a>
+        </div>
+    </div>
+
+    <script>
+        // Check Authentication Status on Load
+        window.addEventListener('DOMContentLoaded', async () => {
+            const token = sessionStorage.getItem('zonda_token');
+            if (token) {
+                try {
+                    const res = await fetch('/api/verify_session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: token })
+                    });
+                    const data = await res.json();
+                    if (data.valid) {
+                        showDashboard();
+                        return;
+                    }
+                } catch(e) {}
+            }
+            // If not logged in, keep login overlay visible
+            document.getElementById('loginOverlay').style.display = 'flex';
+            document.getElementById('adminDashboard').style.display = 'none';
+        });
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const password = document.getElementById('adminPasswordInput').value;
+            const alertEl = document.getElementById('loginAlert');
+            alertEl.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    sessionStorage.setItem('zonda_token', data.token);
+                    showDashboard();
+                } else {
+                    alertEl.innerText = data.error || 'Contraseña incorrecta';
+                    alertEl.style.display = 'block';
+                }
+            } catch(err) {
+                alertEl.innerText = 'Error de conexión con el servidor.';
+                alertEl.style.display = 'block';
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            loadGalleries();
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('zonda_token');
+            location.reload();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            if(event && event.target) event.target.classList.add('active');
+            document.getElementById('tab_' + tabId).classList.add('active');
+        }
+
+        function showAlert(id, type, msg) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.className = 'alert ' + type;
+            el.innerText = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        async function loadGalleries() {
+            // 1. Load Lookbook
+            try {
+                const resL = await fetch('/api/lookbook');
+                const dataL = await resL.json();
+                const galL = document.getElementById('gallery_lookbook');
+                galL.innerHTML = '';
+                dataL.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'admin-item';
+                    div.innerHTML = `
+                        <img src="${item.src}" alt="Lookbook image">
+                        <input type="text" id="desc_${item.id}" value="${item.description || ''}" placeholder="Sin descripción...">
+                        <div class="admin-item-actions">
+                            <button onclick="updateItem('lookbook', '${item.id}')">Guardar</button>
+                            <button class="danger" onclick="deleteItem('lookbook', '${item.id}')">Borrar</button>
+                        </div>
+                    `;
+                    galL.appendChild(div);
+                });
+            } catch(e) {}
+
+            // 2. Load Catalogo
+            try {
+                const resC = await fetch('/api/catalogo');
+                const dataC = await resC.json();
+                const galC = document.getElementById('gallery_catalogo');
+                galC.innerHTML = '';
+                dataC.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'admin-item';
+                    div.innerHTML = `
+                        <img src="${item.src}" alt="Catalogo">
+                        <input type="text" id="title_${item.id}" value="${item.title || ''}" placeholder="Título">
+                        <input type="text" id="price_${item.id}" value="${item.price || ''}" placeholder="Precio">
+                        <div class="admin-item-actions">
+                            <button onclick="updateItem('catalogo', '${item.id}')">Guardar</button>
+                            <button class="danger" onclick="deleteItem('catalogo', '${item.id}')">Borrar</button>
+                        </div>
+                    `;
+                    galC.appendChild(div);
+                });
+            } catch(e) {}
+
+            // 3. Load Noticias
+            try {
+                const resN = await fetch('/api/noticias');
+                const dataN = await resN.json();
+                const galN = document.getElementById('gallery_noticias');
+                galN.innerHTML = '';
+                dataN.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'admin-item';
+                    let mediaPreview = '';
+                    if (item.media) {
+                        if (item.media_type && item.media_type.includes('video')) {
+                            mediaPreview = `<video src="${item.media}" controls style="width:100%; height:180px; object-fit:cover; border-radius:4px;"></video>`;
+                        } else {
+                            mediaPreview = `<img src="${item.media}" alt="Noticia" style="width:100%; height:180px; object-fit:cover; border-radius:4px;">`;
+                        }
+                    } else {
+                        mediaPreview = `<div style="width:100%; height:100px; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:#666; border-radius:4px;">Sin Multimedia</div>`;
+                    }
+
+                    div.innerHTML = `
+                        ${mediaPreview}
+                        <textarea id="news_text_${item.id}" style="height:70px; margin-bottom:5px;" placeholder="Texto de la noticia...">${item.text || ''}</textarea>
+                        <p style="font-size:0.75rem; color:#888; margin:0;">Cambiar foto/video (opcional):</p>
+                        <input type="file" id="news_media_${item.id}" accept="image/*, video/mp4, video/webm" style="font-size:0.8rem;">
+                        <div class="admin-item-actions">
+                            <button onclick="updateNewsItem('${item.id}')">Guardar</button>
+                            <button class="danger" onclick="deleteItem('noticias', '${item.id}')">Borrar</button>
+                        </div>
+                    `;
+                    galN.appendChild(div);
+                });
+            } catch(e) {}
+
+            // 4. Load FAQ
+            try {
+                const resF = await fetch('/api/faq');
+                const dataF = await resF.json();
+                const galF = document.getElementById('gallery_faq');
+                galF.innerHTML = '';
+                dataF.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'admin-item';
+                    div.innerHTML = `
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="faq_icon_${item.id}" value="${item.icon || '❓'}" style="width:60px;" placeholder="Icono">
+                            <input type="text" id="faq_title_${item.id}" value="${item.title || ''}" placeholder="Título">
+                        </div>
+                        <input type="text" id="faq_cat_${item.id}" value="${item.category || ''}" placeholder="Categoría">
+                        <textarea id="faq_content_${item.id}" style="height:100px;" placeholder="Contenido...">${item.content || ''}</textarea>
+                        <div class="admin-item-actions">
+                            <button onclick="updateFaqItem('${item.id}')">Guardar</button>
+                            <button class="danger" onclick="deleteFaqItem('${item.id}')">Borrar</button>
+                        </div>
+                    `;
+                    galF.appendChild(div);
+                });
+            } catch(e) {}
+
+            // 5. Load Reseñas
+            try {
+                const resR = await fetch('/api/reseñas');
+                const dataR = await resR.json();
+                const galR = document.getElementById('gallery_reseñas');
+                galR.innerHTML = '';
+                dataR.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'admin-item';
+                    div.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <input type="text" id="res_name_${item.id}" value="${item.name || ''}" placeholder="Nombre Autor">
+                            <select id="res_rating_${item.id}" style="width:110px; margin-left:10px;">
+                                <option value="5" ${item.rating == 5 ? 'selected':''}>★ 5/5</option>
+                                <option value="4" ${item.rating == 4 ? 'selected':''}>★ 4/5</option>
+                                <option value="3" ${item.rating == 3 ? 'selected':''}>★ 3/5</option>
+                                <option value="2" ${item.rating == 2 ? 'selected':''}>★ 2/5</option>
+                                <option value="1" ${item.rating == 1 ? 'selected':''}>★ 1/5</option>
+                            </select>
+                        </div>
+                        <textarea id="res_comment_${item.id}" style="height:75px;" placeholder="Comentario...">${item.comment || ''}</textarea>
+                        <div class="admin-item-actions">
+                            <button onclick="updateReseñaItem('${item.id}')">Guardar</button>
+                            <button class="danger" onclick="deleteReseñaItem('${item.id}')">Borrar</button>
+                        </div>
+                    `;
+                    galR.appendChild(div);
+                });
+            } catch(e) {}
+        }
+
+        async function updateItem(type, id) {
+            let body = { id: id };
+            if (type === 'lookbook') body.description = document.getElementById('desc_' + id).value;
+            if (type === 'catalogo') {
+                body.title = document.getElementById('title_' + id).value;
+                body.price = document.getElementById('price_' + id).value;
+            }
+            
+            await fetch(`/api/${type}/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            alert("Cambios guardados correctamente.");
+            loadGalleries();
+        }
+
+        async function updateNewsItem(id) {
+            const text = document.getElementById('news_text_' + id).value;
+            const fileInput = document.getElementById('news_media_' + id);
+            let body = { id: id, text: text };
+
+            if (fileInput && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    body.media = e.target.result.split(',')[1];
+                    body.media_type = file.type;
+                    await saveNewsUpdate(body);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                await saveNewsUpdate(body);
+            }
+        }
+
+        async function saveNewsUpdate(body) {
+            try {
+                const res = await fetch('/api/noticias/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    alert("Noticia actualizada correctamente.");
+                    loadGalleries();
+                } else {
+                    alert("Error al actualizar: " + (result.error || "error desconocido"));
+                }
+            } catch(e) {
+                alert("Error de conexión al actualizar la noticia.");
+            }
+        }
+
+        async function addFaqItem() {
+            const icon = document.getElementById('faqIcon').value;
+            const title = document.getElementById('faqTitle').value;
+            const category = document.getElementById('faqCategory').value;
+            const content = document.getElementById('faqContent').value;
+
+            if(!title || !content) return showAlert('alert_faq', 'error', 'El título y contenido son obligatorios.');
+
+            try {
+                const res = await fetch('/api/faq/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ icon, title, category, content })
+                });
+                const result = await res.json();
+                if(result.success) {
+                    showAlert('alert_faq', 'success', '¡Pregunta Frecuente agregada con éxito!');
+                    document.getElementById('faqTitle').value = '';
+                    document.getElementById('faqContent').value = '';
+                    loadGalleries();
+                }
+            } catch(e) {
+                showAlert('alert_faq', 'error', 'Error al agregar.');
+            }
+        }
+
+        async function updateFaqItem(id) {
+            const icon = document.getElementById('faq_icon_' + id).value;
+            const title = document.getElementById('faq_title_' + id).value;
+            const category = document.getElementById('faq_cat_' + id).value;
+            const content = document.getElementById('faq_content_' + id).value;
+
+            await fetch('/api/faq/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, icon, title, category, content })
+            });
+            alert("Pregunta Frecuente actualizada.");
+            loadGalleries();
+        }
+
+        async function deleteFaqItem(id) {
+            if(!confirm("¿Eliminar esta Pregunta Frecuente?")) return;
+            await fetch('/api/faq/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            loadGalleries();
+        }
+
+        async function updateReseñaItem(id) {
+            const name = document.getElementById('res_name_' + id).value;
+            const rating = parseInt(document.getElementById('res_rating_' + id).value, 10);
+            const comment = document.getElementById('res_comment_' + id).value;
+
+            await fetch('/api/reseñas/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, name, rating, comment })
+            });
+            alert("Reseña actualizada.");
+            loadGalleries();
+        }
+
+        async function deleteReseñaItem(id) {
+            if(!confirm("¿Eliminar esta reseña?")) return;
+            await fetch('/api/reseñas/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
+            });
+            loadGalleries();
+        }
+
+        async function deleteItem(type, id) {
+            if(!confirm("¿Estás seguro que deseas eliminar este elemento?")) return;
+            await fetch(`/api/${type}/delete`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: id })
+            });
+            loadGalleries();
+        }
+
+        async function uploadPhoto(type) {
+            const fileInput = document.getElementById(type + 'File');
+            const alertId = 'alert_' + type;
+            if(!fileInput.files[0]) return showAlert(alertId, 'error', 'Selecciona una foto primero.');
+            
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = async function(e) {
+                const base64Data = e.target.result.split(',')[1];
+                let body = { image: base64Data };
+                
+                if(type === 'lookbook') body.description = document.getElementById('lookbookDesc').value;
+                if(type === 'catalogo') {
+                    body.title = document.getElementById('catalogoTitle').value;
+                    body.price = document.getElementById('catalogoPrice').value;
+                }
+                
+                try {
+                    const res = await fetch(`/api/upload_${type}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    const result = await res.json();
+                    if(result.success) {
+                        showAlert(alertId, 'success', '¡Subido y procesado con éxito!');
+                        fileInput.value = '';
+                        loadGalleries();
+                    } else {
+                        showAlert(alertId, 'error', 'Error: ' + result.error);
+                    }
+                } catch(err) {
+                    showAlert(alertId, 'error', 'Error de conexión.');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function updateNews() {
+            const text = document.getElementById('newsText').value;
+            const fileInput = document.getElementById('newsMedia');
+            
+            let body = { text: text };
+            
+            if (fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    body.media = e.target.result.split(',')[1];
+                    body.media_type = file.type;
+                    sendNews(body);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                sendNews(body);
+            }
+        }
+
+        async function sendNews(body) {
+            if(!body.text && !body.media) return showAlert('alert_news', 'error', 'Agrega un texto o un archivo.');
+            try {
+                const res = await fetch('/api/upload_noticias', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const result = await res.json();
+                if(result.success) {
+                    showAlert('alert_news', 'success', '¡Noticia publicada en la web!');
+                    document.getElementById('newsText').value = '';
+                    document.getElementById('newsMedia').value = '';
+                    loadGalleries();
+                } else {
+                    showAlert('alert_news', 'error', 'Error: ' + result.error);
+                }
+            } catch(err) {
+                showAlert('alert_news', 'error', 'Error de conexión.');
+            }
+        }
+    </script>
+</body>
+</html>

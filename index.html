@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zonda - Indumentaria</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Left Column: Navigation & Branding -->
+        <aside class="sidebar">
+            <div class="brand">
+                <h1>ZONDA</h1>
+                <p>Moda Urbana y Estilo de Vida</p>
+            </div>
+            
+            <nav class="interactive-menu">
+                <button class="tab-btn" data-target="tab-catalogo">Catálogo</button>
+                <button class="tab-btn active" data-target="tab-lookbook">Lookbook</button>
+                <button class="tab-btn" data-target="tab-noticias">Noticias & Promos</button>
+                <button class="tab-btn" data-target="tab-faq">Preguntas Frecuentes</button>
+                <button class="tab-btn" data-target="tab-reseñas">Reseñas</button>
+            </nav>
+
+            <!-- Video Reel en Bucle (Sidebar Izquierdo) -->
+            <div class="sidebar-video-reel" style="margin: 8px 0 10px 0; position: relative; width: 100%; height: 240px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 12px 28px rgba(0,0,0,0.6); flex-shrink: 0;">
+                
+                <!-- Top Story Progress Bars -->
+                <div id="reelStoryBars" style="position: absolute; top: 10px; left: 10px; right: 10px; z-index: 5; display: flex; gap: 4px;">
+                </div>
+
+                <!-- Main Video Element -->
+                <video id="sequentialVideoPlayer" src="modelos/Woman_modeling_hoodie_on_bench_20261001235917.mp4" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer;"></video>
+
+                <!-- Controls Overlay Gradient -->
+                <div style="position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 20%, transparent 70%, rgba(0,0,0,0.85) 100%);"></div>
+
+                <!-- Top Right Sound Button -->
+                <button id="videoSoundBtn" style="position: absolute; top: 20px; right: 10px; z-index: 6; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); color: #fff; border: 1px solid rgba(255,255,255,0.2); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;">
+                    🔇
+                </button>
+
+                <!-- Left & Right Arrow Buttons -->
+                <button id="prevVideoBtn" style="position: absolute; left: 8px; top: 50%; transform: translateY(-50%); z-index: 6; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.15); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; backdrop-filter: blur(6px);">
+                    &#10094;
+                </button>
+                <button id="nextVideoBtn" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); z-index: 6; background: rgba(0,0,0,0.4); color: #fff; border: 1px solid rgba(255,255,255,0.15); width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; backdrop-filter: blur(6px);">
+                    &#10095;
+                </button>
+
+                <!-- Bottom Title Info -->
+                <div style="position: absolute; bottom: 12px; left: 12px; right: 12px; z-index: 6; text-align: left;">
+                    <p id="videoCurrentTitle" style="font-size: 0.78rem; color: #fff; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 2px 4px rgba(0,0,0,0.9);"></p>
+                </div>
+            </div>
+
+            <div class="contact-area">
+                <a href="https://wa.me/5492617462601?text=Hola,%20vengo%20de%20la%20web.%20Quiero%20consultar%20por%20una%20prenda." class="btn-whatsapp" target="_blank">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.418-.099.823z"/>
+                    </svg>
+                    Consultar Ventas
+                </a>
+                <a href="https://www.instagram.com/p/DX7i5EjifFL/?stkn=bHd0ZnBjdHl5MW1z" class="btn-instagram" target="_blank">Instagram</a>
+            </div>
+        </aside>
+
+        <!-- Right Column: Main Content -->
+        <main class="main-content">
+            
+            <!-- Tab: Catálogo -->
+            <section id="tab-catalogo" class="tab-content">
+                <h2 class="section-title">Tienda Oficial</h2>
+<!-- CATALOGO START -->
+<div class="products-grid">
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/zonda_cat_7b788133.webp" alt="oferta" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>oferta</h3>
+                            <p class="price">$25.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-26%20%286%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-26%20%287%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-26%20%288%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-26%20%289%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-27%20%282%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-27%20%284%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-27%20%285%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-27%20%287%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-27%20%289%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-27.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-28%20%283%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-28%20%284%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-28%20%285%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-28%20%286%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-28%20%287%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29%20%2810%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29%20%2811%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29%20%2812%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29%20%282%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29%20%283%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29%20%284%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29%20%286%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-30%20%2810%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-30%20%2811%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-30%20%285%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-30%20%287%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-30%20%288%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-30%20%289%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-31%20%283%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-31%20%284%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-31%20%285%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-31%20%286%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-31%20%287%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-31.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32%20%2810%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32%20%282%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32%20%283%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32%20%285%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32%20%286%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32%20%288%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32%20%289%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-32.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-33%20%282%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-33%20%283%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-33%20%284%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-33%20%285%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-33.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-34%20%282%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-34%20%283%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-34%20%284%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-34%20%285%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-34%20%289%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-34.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-35%20%282%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-35%20%283%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-35%20%285%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-35%20%286%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-35.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-36%20%282%29.webp" alt="Buzo Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Buzo Zonda</h3>
+                            <p class="price">$60.000</p>
+                        </div>
+                    </article>
+                    <article class="product-card">
+                        <div class="product-img">
+                            <img src="fotos/photo_2026-10-01_14-28-36%20%283%29.webp" alt="Remera Zonda" loading="lazy">
+                        </div>
+                        <div class="product-info">
+                            <h3>Remera Zonda</h3>
+                            <p class="price">$30.000</p>
+                        </div>
+                    </article>
+                </div>
+<!-- CATALOGO END -->
+</section>
+
+            <!-- Tab: Lookbook -->
+            <section id="tab-lookbook" class="tab-content active">
+                <h2 class="section-title">Lookbook Models</h2>
+<!-- LOOKBOOK START -->
+<div class="lookbook-grid">
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_sitting_on_rooftop_20261001233641.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_standing_in_photography_studio_20261002011737.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_standing_in_photography_studio_20261002012415.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_walking_on_coastal_boardwalk_20261001235541.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_Slayer_graphic_t-shirt_20261002011808.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_black_graphic_t-shirt_20261002011758.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_black_streetwear_t-s…_20261002011157.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_blue_hoodie_20261002010942.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_branded_hoodie_20261002012400.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_dragon_shirt_20261002011830.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_dragon_t-shirt_20261002011853.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_dusty_blue_hoodie_20261002005952.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_dusty_blue_hoodie_20261002010012.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_hoodie_20261002011933.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_hoodie_20261002012418.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002010006.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002010353.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002010427.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002010443.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002010451.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002010825.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002011203.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002011214.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002011232.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002011813.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002011840.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002011847.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002011910.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002012648.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_graphic_t-shirt_20261002095611.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_green_t-shirt_20261002012629.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_hoodie_in_studio_20261002010948.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_leather_jacket_20261002011750.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_olive_green_t-shirt_20261002010724.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_olive_green_t-shirt_20261002010727.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_skull_t-shirt_20261002011920.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_t-shirt_in_studio_20261002005939.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_white_t-shirt_20261002000651.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Man_wearing_white_t-shirt_20261002000656.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Model_wearing_hoodie_20261001231459.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Model_wearing_navy_blue_sweatshirt_20261001235529.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Model_wearing_t-shirt_20261001232114.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Model_wearing_t-shirt_in_alley_20261001233646.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Model_wearing_t_shirt_20261001232058.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Model_wearing_t_shirt_20261001232103.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Model_wearing_white_t-shirt_20261001235519.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_grey_hoodie_20261001235526.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_20261002100806.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_20261002100841.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_20261002101516.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_20261002101528.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_20261002101532.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_20261002101536.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_20261002101547.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002100822.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002100827.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002100831.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002100837.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002100848.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002101508.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002101519.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002101523.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002101543.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t-shirt_in_studio_20261002101551.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t_shirt_20261002100813.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t_shirt_20261002100818.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Person_modeling_t_shirt_20261002101540.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_modeling_white_hoodie_sitting_20261001235534.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_CMMNTY_California_…_20261002012715.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_CMMNTY_California_…_20261002012752.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_Tiki_Tuesdays_shirt_20261002010808.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_hoodie_20261002005957.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_hoodie_20261002010938.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_hoodie_20261002010953.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_hoodie_20261002011926.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_hoodie_20261002011937.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_streetwear_t…_20261002010816.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_t-shirt_20261002010812.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_black_t-shirt_20261002011754.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_hoodie_20261002011945.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002005948.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002010002.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002010422.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002010430.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002010707.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002010711.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002011220.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002011803.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002012721.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002012737.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002012954.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_graphic_t-shirt_20261002095618.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_pink_t-shirt_20261002010803.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_rust-red_t-shirt_20261002012155.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_snake_graphic_t-shirt_20261002012656.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_t-shirt_in_studio_20261002012742.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/Woman_wearing_terracotta_t-shirt_20261002011825.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/b.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/e.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/ee.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/eee.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/pomelli_photoshoot_image_9_16_1001 (2).webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/pomelli_photoshoot_image_9_16_1001 (5).webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/pomelli_photoshoot_image_9_16_1001 (7).webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                    <article class="lookbook-item" style="position:relative;">
+                        <img src="./modelos/pomelli_photoshoot_image_9_16_1001.webp" alt="Modelo Zonda" loading="lazy">
+                        
+                    </article>
+                </div>
+<!-- LOOKBOOK END -->
+            </section>
+
+            <!-- Tab: Noticias y Promociones -->
+            <section id="tab-noticias" class="tab-content">
+                <h2 class="section-title">Noticias & Promociones</h2>
+<!-- NOTICIAS START -->
+<div class="news-grid">
+                    <article class="news-card visible">
+                        <div class="news-media">
+                            <img src="news_media/news_843c4883.webp" alt="Noticia Zonda" loading="lazy" style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;">
+                        </div>
+<div class="news-body" style="padding: 22px;"><p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin:0;">ofeta $22.000</p></div>
+                    </article>
+                    <article class="news-card visible">
+                        <div class="news-media">
+                            <img src="news_media/news_7e7fe706.webp" alt="Noticia Zonda" loading="lazy" style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;">
+                        </div>
+
+                    </article>
+                </div>
+<!-- NOTICIAS END -->
+            <!-- Tab: Preguntas Frecuentes -->
+            <section id="tab-faq" class="tab-content">
+                <h2 class="section-title">Preguntas Frecuentes</h2>
+<!-- FAQ START -->
+<div class="faq-container">
+                    <div class="faq-card">
+                        <div class="faq-header">
+                            <span class="faq-icon">📏</span>
+                            <h3>Talles y Guía de Medidas</h3>
+                        </div>
+                        <div class="faq-body">
+                            Nuestras remeras y buzos cuentan con corte <strong>Oversize Streetwear</strong> y <strong>Regular Fit Premium</strong>.<br><table class="size-table"><thead><tr><th>Talle</th><th>Ancho (Sisa)</th><th>Largo Total</th></tr></thead><tbody><tr><td>S</td><td>52 cm</td><td>70 cm</td></tr><tr><td>M</td><td>55 cm</td><td>73 cm</td></tr><tr><td>L</td><td>58 cm</td><td>76 cm</td></tr><tr><td>XL</td><td>61 cm</td><td>78 cm</td></tr><tr><td>XXL</td><td>64 cm</td><td>81 cm</td></tr></tbody></table><p class="faq-note">💡 <em>Tip: Si te gusta el estilo holgado oversize, elegí tu talle habitual. Si preferís un calce al cuerpo, podés elegir un talle menos.</em></p>
+                        </div>
+                    </div>
+                    <div class="faq-card">
+                        <div class="faq-header">
+                            <span class="faq-icon">✨</span>
+                            <h3>Calidad de la Tela y Confección</h3>
+                        </div>
+                        <div class="faq-body">
+                            Utilizamos exclusivamente <strong>Algodón 100% Peinado Premium 24/1</strong> de alta densidad.<br>• <strong>Textura ultra suave:</strong> Confort superior al tacto y respirabilidad total.<br>• <strong>Pre-encogido:</strong> Lavadas en proceso industrial para evitar deformaciones o cambios de talle.<br>• <strong>Estamparía HD:</strong> Tinta textil DTG y Serigrafía Plastisol de alta durabilidad que no se cuartea ni pierde color.<br>• <strong>Costuras reforzadas:</strong> Cuello con tapa costura de hombro a hombro y doble atracado en mangas y ruedos.
+                        </div>
+                    </div>
+                    <div class="faq-card">
+                        <div class="faq-header">
+                            <span class="faq-icon">🕒</span>
+                            <h3>Horarios de Citas y Showroom</h3>
+                        </div>
+                        <div class="faq-body">
+                            Brindamos atención personalizada en nuestro Showroom exclusivo para que te pruebes todas nuestras prendas con tranquilidad.<br><br><strong>Horarios de atención con cita previa:</strong><br>📅 <strong>Lunes a Viernes:</strong> 10:00 hs a 19:00 hs<br>📅 <strong>Sábados:</strong> 10:00 hs a 14:00 hs<br><br>Para agendar tu cita, escribinos directamente por WhatsApp haciendo clic en el botón del menú lateral.
+                        </div>
+                    </div>
+                    <div class="faq-card">
+                        <div class="faq-header">
+                            <span class="faq-icon">📍</span>
+                            <h3>Ubicación y Envíos</h3>
+                        </div>
+                        <div class="faq-body">
+                            📍 <strong>Ubicación:</strong> Mendoza, Argentina.<br>🚚 <strong>Envíos:</strong> Realizamos envíos a todo el país a través de Correo Argentino y transportes exprés. Para Mendoza capital y alrededores contamos con entrega inmediata por mensajería en el día.
+                        </div>
+                    </div>
+                    <div class="faq-card">
+                        <div class="faq-header">
+                            <span class="faq-icon">💳</span>
+                            <h3>Medios de Pago Aceptados</h3>
+                        </div>
+                        <div class="faq-body">
+                            Aceptamos Transferencia bancaria (10% de descuento), MercadoPago, tarjetas de crédito y efectivo en showroom.
+                        </div>
+                    </div>
+                </div>
+<!-- FAQ END -->
+            </section>
+
+            <!-- Tab: Reseñas de Clientes -->
+            <section id="tab-reseñas" class="tab-content">
+                <h2 class="section-title">Reseñas de Clientes</h2>
+                
+                <div class="reviews-summary-card">
+                    <div class="rating-score">
+                        <span class="score-number">4.9</span>
+                        <div class="stars-gold">★★★★★</div>
+                        <span class="score-subtitle">basado en opiniones de compradores</span>
+                    </div>
+                    <p style="color: var(--text-secondary); max-width: 500px; text-align: center;">Tu satisfacción es nuestra prioridad. Conocé las experiencias de quienes ya visten Zonda Streetwear.</p>
+                </div>
+
+                <!-- Formulario para Dejar Reseña -->
+                <div class="add-review-card">
+                    <h3>Dejá tu Opinión</h3>
+                    <form id="form-reseña" class="review-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="rev-name">Tu Nombre</label>
+                                <input type="text" id="rev-name" placeholder="Ej: Marcos G." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="rev-rating">Calificación</label>
+                                <select id="rev-rating" required>
+                                    <option value="5">★★★★★ (5/5) - Excelente</option>
+                                    <option value="4">★★★★☆ (4/5) - Muy Buena</option>
+                                    <option value="3">★★★☆☆ (3/5) - Buena</option>
+                                    <option value="2">★★☆☆☆ (2/5) - Regular</option>
+                                    <option value="1">★☆☆☆☆ (1/5) - Mala</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="rev-comment">Tu Reseña / Comentario</label>
+                            <textarea id="rev-comment" rows="3" placeholder="Contanos qué te pareció la calidad, la atención o el calce de la prenda..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit-review">Publicar Reseña</button>
+                    </form>
+                </div>
+
+                <!-- Grilla de Reseñas -->
+                <div id="reviews-grid" class="reviews-grid">
+                    <!-- Dinámico vía JS -->
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modal de Solicitud de Compra "LO QUIERO..!!" -->
+    <div id="modal-compra" class="modal-overlay">
+        <div class="modal-card">
+            <button id="close-modal-compra" class="modal-close-btn" aria-label="Cerrar">&times;</button>
+            
+            <div class="modal-badge-title">LO QUIERO..!!</div>
+            <p class="modal-subtitle">Completá tus datos para solicitar esta prenda directamente con el vendedor</p>
+            
+            <div class="modal-product-preview">
+                <img id="modal-product-img" src="" alt="Prenda Zonda">
+                <div class="modal-product-details">
+                    <h4 id="modal-product-title">Remera Zonda</h4>
+                    <p id="modal-product-price" class="modal-price">$30.000</p>
+                </div>
+            </div>
+
+            <form id="form-compra" class="purchase-form">
+                <input type="hidden" id="buy-product-title">
+                <input type="hidden" id="buy-product-price">
+                
+                <div class="form-group">
+                    <label for="buy-name">Nombre y Apellido *</label>
+                    <input type="text" id="buy-name" placeholder="Ej: Juan Pérez" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="buy-phone">WhatsApp / Teléfono *</label>
+                        <input type="tel" id="buy-phone" placeholder="Ej: 261 123 4567" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="buy-size">Talle Deseado *</label>
+                        <select id="buy-size" required>
+                            <option value="S">Talle S</option>
+                            <option value="M" selected>Talle M</option>
+                            <option value="L">Talle L</option>
+                            <option value="XL">Talle XL</option>
+                            <option value="XXL">Talle XXL</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="buy-address">Dirección de Entrega / Localidad</label>
+                    <input type="text" id="buy-address" placeholder="Ej: Av. San Martín 1234, Mendoza">
+                </div>
+
+                <div class="form-group">
+                    <label for="buy-notes">Notas o consultas sobre el pedido (opcional)</label>
+                    <textarea id="buy-notes" rows="2" placeholder="Ej: ¿Tienen stock en color negro? Quisiera probarme en el showroom."></textarea>
+                </div>
+
+                <button type="submit" class="btn-lo-quiero">
+                    <span>LO QUIERO..!!</span>
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.418-.099.823z"/>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
