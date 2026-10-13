@@ -460,7 +460,8 @@
 
             // 5. Load Reseñas
             try {
-                const resR = await fetch('/api/reseñas');
+                let resR = await fetch('/api/reseñas');
+                if (!resR.ok) resR = await fetch('reseñas.json');
                 const dataR = await resR.json();
                 const galR = document.getElementById('gallery_reseñas');
                 galR.innerHTML = '';

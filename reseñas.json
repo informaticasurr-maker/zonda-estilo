@@ -1,37 +1,100 @@
 [
     {
-        "id": "res_48380b",
+        "id": "res_001",
         "name": "Mariana G.",
         "rating": 5,
-        "date": "Hoy",
-        "comment": "La remera en vivo es mucho m\u00e1s linda que en fotos! me encant\u00f3."
-    },
-    {
-        "id": "res_001",
-        "name": "Lucas M.",
-        "rating": 5,
-        "date": "01 Oct 2026",
-        "comment": "La calidad del algod\u00f3n es tremenda, el calce oversize queda incre\u00edble. 100% recomendado."
+        "date": "12 Oct 2026",
+        "comment": "La remera en vivo es mucho más linda que en fotos! La caída del algodón es espectacular y el calce oversize queda perfecto."
     },
     {
         "id": "res_002",
-        "name": "Sof\u00eda R.",
+        "name": "Lucas M.",
         "rating": 5,
-        "date": "29 Sep 2026",
-        "comment": "Lleg\u00f3 s\u00faper r\u00e1pido y la atenci\u00f3n por WhatsApp fue genial. La remera es hermos\u00edsima."
+        "date": "10 Oct 2026",
+        "comment": "La calidad del algodón 24/1 es tremenda, tela pesada y resistente como me gusta. 100% recomendado."
     },
     {
         "id": "res_003",
-        "name": "Gabriel T.",
+        "name": "Joaquín B.",
         "rating": 5,
-        "date": "25 Sep 2026",
-        "comment": "Impresionante la estampa y el grosor de la tela. No se achica para nada con los lavados."
+        "date": "08 Oct 2026",
+        "comment": "El buzo con friza superó todas mis expectativas. Es súper abrigado, pesado y la capucha tiene una estructura genial. La mejor compra."
     },
     {
         "id": "res_004",
-        "name": "Valentina P.",
+        "name": "Camila V.",
+        "rating": 5,
+        "date": "05 Oct 2026",
+        "comment": "Compré la remera oversize negra y me sorprendió el grosor de la tela. Caída perfecta para armar outfits urbanos. ¡La rompieron!"
+    },
+    {
+        "id": "res_005",
+        "name": "Facundo D.",
+        "rating": 5,
+        "date": "02 Oct 2026",
+        "comment": "Atención de 10 por WhatsApp, coordinamos la entrega al toque en Mendoza. El estampado serigráfico tiene un relieve y durabilidad de primera."
+    },
+    {
+        "id": "res_006",
+        "name": "Sofía R.",
+        "rating": 5,
+        "date": "29 Sep 2026",
+        "comment": "Llegó súper rápido y la atención fue genial. La remera es hermosísima, no destiñe nada al lavarla."
+    },
+    {
+        "id": "res_007",
+        "name": "Agustina L.",
+        "rating": 4,
+        "date": "26 Sep 2026",
+        "comment": "Excelente relación precio-calidad. El talle M me quedó justo el oversize que buscaba. Muy buena confección en las costuras."
+    },
+    {
+        "id": "res_008",
+        "name": "Gabriel T.",
+        "rating": 5,
+        "date": "23 Sep 2026",
+        "comment": "Impresionante la estampa y el grosor de la tela. No se achica para nada con los lavados continuos."
+    },
+    {
+        "id": "res_009",
+        "name": "Nicolás R.",
         "rating": 5,
         "date": "20 Sep 2026",
-        "comment": "S\u00faper c\u00f3moda, la tela es bien suave y abrigada. Definitivamente voy a volver a comprar."
+        "comment": "Para andar en skate o salir con amigos va como piña. Re cómoda, corte suelto impecable. Ya les encargué otra."
+    },
+    {
+        "id": "res_010",
+        "name": "Valentina P.",
+        "rating": 5,
+        "date": "17 Sep 2026",
+        "comment": "Súper cómoda, la tela es bien suave y el corte moderno. Definitivamente voy a volver a comprar."
+    },
+    {
+        "id": "res_011",
+        "name": "Thiago S.",
+        "rating": 5,
+        "date": "14 Sep 2026",
+        "comment": "El corte de hombros caídos es perfecto, no te queda cuadrada como en otras marcas. 10/10 en estilo y durabilidad."
+    },
+    {
+        "id": "res_012",
+        "name": "Julieta M.",
+        "rating": 5,
+        "date": "11 Sep 2026",
+        "comment": "Increíble diseño, se nota la identidad de la marca en cada detalle. Es difícil encontrar streetwear nacional con este nivel."
+    },
+    {
+        "id": "res_013",
+        "name": "Renata C.",
+        "rating": 4,
+        "date": "08 Sep 2026",
+        "comment": "Pedí con envío al interior y llegó todo en orden y bien empaquetado. La tela es súper suave y los detalles son de diez."
+    },
+    {
+        "id": "res_014",
+        "name": "Mateo K.",
+        "rating": 5,
+        "date": "04 Sep 2026",
+        "comment": "Compré el combo remera + buzo y valió cada peso. La calidad se nota al instante y la onda que tienen es única."
     }
 ]

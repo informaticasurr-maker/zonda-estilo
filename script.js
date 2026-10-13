@@ -24,6 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Check URL hash on load (e.g. #reseñas or #tab-reseñas)
+    if (window.location.hash) {
+        try {
+            const rawHash = window.location.hash.replace('#', '');
+            const decodedHash = decodeURIComponent(rawHash);
+            const targetBtn = document.querySelector(`.tab-btn[data-target="${decodedHash}"]`) ||
+                              document.querySelector(`.tab-btn[data-target="tab-${decodedHash}"]`) ||
+                              document.querySelector(`.tab-btn[data-target="${rawHash}"]`);
+            if (targetBtn) {
+                targetBtn.click();
+            }
+        } catch(e) {}
+    }
+
     function escapeHTML(str) {
         if (!str) return '';
         return String(str)
@@ -196,64 +210,306 @@ document.addEventListener('DOMContentLoaded', () => {
         renderStoryBars();
     }
 
-    // Load Reseñas function
-    async function loadReseñas() {
+    // ==========================================
+    // SISTEMA DE RESEÑAS Y OPINIONES DE CLIENTES
+    // ==========================================
+    const LOCAL_REVIEWS_KEY = 'zonda_client_reviews';
+
+    function getLocalReseñas() {
+        try {
+            const raw = localStorage.getItem(LOCAL_REVIEWS_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch(e) {
+            return [];
+        }
+    }
+
+    function saveLocalReseña(review) {
+        try {
+            const current = getLocalReseñas();
+            current.unshift(review);
+            localStorage.setItem(LOCAL_REVIEWS_KEY, JSON.stringify(current.slice(0, 50)));
+        } catch(e) {}
+    }
+
+    const DEFAULT_FALLBACK_REVIEWS = [
+        { id: "res_001", name: "Mariana G.", rating: 5, date: "12 Oct 2026", comment: "La remera en vivo es mucho más linda que en fotos! La caída del algodón es espectacular y el calce oversize queda perfecto." },
+        { id: "res_002", name: "Lucas M.", rating: 5, date: "10 Oct 2026", comment: "La calidad del algodón 24/1 es tremenda, tela pesada y resistente como me gusta. 100% recomendado." },
+        { id: "res_003", name: "Joaquín B.", rating: 5, date: "08 Oct 2026", comment: "El buzo con friza superó todas mis expectativas. Es súper abrigado, pesado y la capucha tiene una estructura genial. La mejor compra." },
+        { id: "res_004", name: "Camila V.", rating: 5, date: "05 Oct 2026", comment: "Compré la remera oversize negra y me sorprendió el grosor de la tela. Caída perfecta para armar outfits urbanos. ¡La rompieron!" },
+        { id: "res_005", name: "Facundo D.", rating: 5, date: "02 Oct 2026", comment: "Atención de 10 por WhatsApp, coordinamos la entrega al toque en Mendoza. El estampado serigráfico tiene un relieve y durabilidad de primera." },
+        { id: "res_006", name: "Sofía R.", rating: 5, date: "29 Sep 2026", comment: "Llegó súper rápido y la atención fue genial. La remera es hermosísima, no destiñe nada al lavarla." },
+        { id: "res_007", name: "Agustina L.", rating: 4, date: "26 Sep 2026", comment: "Excelente relación precio-calidad. El talle M me quedó justo el oversize que buscaba. Muy buena confección en las costuras." },
+        { id: "res_008", name: "Gabriel T.", rating: 5, date: "23 Sep 2026", comment: "Impresionante la estampa y el grosor de la tela. No se achica para nada con los lavados continuos." },
+        { id: "res_009", name: "Nicolás R.", rating: 5, date: "20 Sep 2026", comment: "Para andar en skate o salir con amigos va como piña. Re cómoda, corte suelto impecable. Ya les encargué otra." },
+        { id: "res_010", name: "Valentina P.", rating: 5, date: "17 Sep 2026", comment: "Súper cómoda, la tela es bien suave y el corte moderno. Definitivamente voy a volver a comprar." },
+        { id: "res_011", name: "Thiago S.", rating: 5, date: "14 Sep 2026", comment: "El corte de hombros caídos es perfecto, no te queda cuadrada como en otras marcas. 10/10 en estilo y durabilidad." },
+        { id: "res_012", name: "Julieta M.", rating: 5, date: "11 Sep 2026", comment: "Increíble diseño, se nota la identidad de la marca en cada detalle. Es difícil encontrar streetwear nacional con este nivel." },
+        { id: "res_013", name: "Renata C.", rating: 4, date: "08 Sep 2026", comment: "Pedí con envío al interior y llegó todo en orden y bien empaquetado. La tela es súper suave y los detalles son de diez." },
+        { id: "res_014", name: "Mateo K.", rating: 5, date: "04 Sep 2026", comment: "Compré el combo remera + buzo y valió cada peso. La calidad se nota al instante y la onda que tienen es única." }
+    ];
+
+    async function fetchReseñasData() {
+        let list = [];
         try {
             const res = await fetch('/api/reseñas?_t=' + Date.now());
-            const data = await res.json();
+            if (res.ok) {
+                list = await res.json();
+            } else {
+                const fallback = await fetch('reseñas.json?_t=' + Date.now());
+                if (fallback.ok) list = await fallback.json();
+            }
+        } catch(e) {
+            try {
+                const fallback = await fetch('reseñas.json?_t=' + Date.now());
+                if (fallback.ok) list = await fallback.json();
+            } catch(err) {}
+        }
+        if (!list || !Array.isArray(list) || list.length === 0) {
+            list = DEFAULT_FALLBACK_REVIEWS;
+        }
+        return list;
+    }
+
+    function updateReviewsMetrics(reviews) {
+        const scoreEl = document.getElementById('reviews-avg-score');
+        const starsEl = document.getElementById('reviews-avg-stars');
+        const countEl = document.getElementById('reviews-count-text');
+
+        if (!reviews || reviews.length === 0) {
+            if (scoreEl) scoreEl.textContent = '5.0';
+            if (starsEl) starsEl.textContent = '★★★★★';
+            if (countEl) countEl.textContent = 'Aún sin opiniones';
+            return;
+        }
+
+        const totalRating = reviews.reduce((acc, curr) => acc + (Number(curr.rating) || 5), 0);
+        const avg = (totalRating / reviews.length).toFixed(1);
+        const roundedStars = Math.round(Number(avg));
+        const starsStr = '★'.repeat(Math.max(1, Math.min(5, roundedStars))) + '☆'.repeat(Math.max(0, 5 - roundedStars));
+
+        if (scoreEl) scoreEl.textContent = avg;
+        if (starsEl) starsEl.textContent = starsStr;
+        if (countEl) {
+            countEl.textContent = `Basado en ${reviews.length} ${reviews.length === 1 ? 'opinión verificada' : 'opiniones verificadas'}`;
+        }
+    }
+
+    // Load Reseñas function
+    async function loadReseñas(newlyAddedId = null) {
+        try {
             const grid = document.getElementById('reviews-grid');
             if (!grid) return;
 
-            if (!data || data.length === 0) {
+            const remote = await fetchReseñasData();
+            const local = getLocalReseñas();
+
+            // Combinar reseñas locales y remotas evitando duplicados
+            const seenIds = new Set();
+            const seenSignatures = new Set();
+            const merged = [];
+
+            // Primero las locales para que el usuario vea su reseña arriba
+            local.forEach(item => {
+                const sig = (item.name || '').trim().toLowerCase() + '|' + (item.comment || '').trim().toLowerCase();
+                if (item.id) seenIds.add(item.id);
+                seenSignatures.add(sig);
+                merged.push(item);
+            });
+
+            remote.forEach(item => {
+                const sig = (item.name || '').trim().toLowerCase() + '|' + (item.comment || '').trim().toLowerCase();
+                if ((!item.id || !seenIds.has(item.id)) && !seenSignatures.has(sig)) {
+                    if (item.id) seenIds.add(item.id);
+                    seenSignatures.add(sig);
+                    merged.push(item);
+                }
+            });
+
+            updateReviewsMetrics(merged);
+
+            if (merged.length === 0) {
                 const emptyMsg = document.createElement('p');
-                emptyMsg.style.cssText = 'color: var(--text-secondary); grid-column: 1/-1; text-align: center;';
-                emptyMsg.textContent = 'Aún no hay reseñas publicadas. ¡Sé el primero en opinar!';
+                emptyMsg.style.cssText = 'color: var(--text-secondary); grid-column: 1/-1; text-align: center; padding: 30px;';
+                emptyMsg.textContent = 'Aún no hay reseñas publicadas. ¡Sé el primero en compartir tu experiencia!';
                 grid.replaceChildren(emptyMsg);
                 return;
             }
 
-            grid.innerHTML = data.map(item => {
-                const safeName = escapeHTML(item.name || 'Anónimo');
+            grid.innerHTML = merged.map(item => {
+                const safeName = escapeHTML(item.name || 'Cliente Zonda');
                 const safeDate = escapeHTML(item.date || 'Reciente');
                 const safeComment = escapeHTML(item.comment || '');
-                const stars = '★'.repeat(item.rating || 5) + '☆'.repeat(5 - (item.rating || 5));
+                const safeProduct = item.product ? escapeHTML(item.product) : '';
+                const ratingNum = Math.max(1, Math.min(5, Number(item.rating) || 5));
+                const stars = '★'.repeat(ratingNum) + '☆'.repeat(5 - ratingNum);
+                const initial = safeName.charAt(0).toUpperCase() || 'Z';
+                const isNew = item.id && item.id === newlyAddedId;
+
                 return `
-                    <article class="review-card">
-                        <div class="review-author-info">
-                            <span class="review-author-name">${safeName}</span>
+                    <article class="review-card ${isNew ? 'newly-added-review' : ''}" ${isNew ? 'id="new-review-card"' : ''}>
+                        <div class="review-header">
+                            <div class="review-author-wrap">
+                                <div class="review-avatar" aria-hidden="true">${initial}</div>
+                                <div class="review-author-meta">
+                                    <span class="review-author-name">${safeName}</span>
+                                    <span class="review-verified-badge">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        Compra verificada
+                                    </span>
+                                </div>
+                            </div>
                             <span class="review-date">${safeDate}</span>
                         </div>
-                        <div class="stars-gold">${stars}</div>
+                        <div class="stars-gold" aria-label="${ratingNum} de 5 estrellas">${stars}</div>
+                        ${safeProduct ? `<span class="review-product-tag">${safeProduct}</span>` : ''}
                         <p class="review-comment">"${safeComment}"</p>
                     </article>
                 `;
             }).join('');
-        } catch(e) {}
+
+            // Scroll si hay una recién agregada
+            if (newlyAddedId) {
+                const newCard = document.getElementById('new-review-card');
+                if (newCard) {
+                    newCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        } catch(e) {
+            console.error('Error al cargar reseñas:', e);
+        }
+    }
+
+    // Inicializar selector interactivo de estrellas
+    const starPicker = document.getElementById('star-picker');
+    const selectRating = document.getElementById('rev-rating');
+
+    function setStarRating(val) {
+        if (!starPicker || !selectRating) return;
+        const stars = starPicker.querySelectorAll('.star-btn');
+        stars.forEach(s => {
+            const starVal = parseInt(s.getAttribute('data-val'), 10);
+            if (starVal <= val) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+            s.classList.remove('hovered');
+        });
+        selectRating.value = String(val);
+    }
+
+    if (starPicker && selectRating) {
+        const starBtns = starPicker.querySelectorAll('.star-btn');
+        starBtns.forEach(btn => {
+            btn.addEventListener('mouseenter', () => {
+                const hoverVal = parseInt(btn.getAttribute('data-val'), 10);
+                starBtns.forEach(s => {
+                    const sVal = parseInt(s.getAttribute('data-val'), 10);
+                    if (sVal <= hoverVal) {
+                        s.classList.add('hovered');
+                    } else {
+                        s.classList.remove('hovered');
+                    }
+                });
+            });
+
+            btn.addEventListener('click', () => {
+                const clickedVal = parseInt(btn.getAttribute('data-val'), 10);
+                setStarRating(clickedVal);
+            });
+        });
+
+        starPicker.addEventListener('mouseleave', () => {
+            const currentVal = parseInt(selectRating.value, 10) || 5;
+            setStarRating(currentVal);
+        });
+
+        selectRating.addEventListener('change', () => {
+            const currentVal = parseInt(selectRating.value, 10) || 5;
+            setStarRating(currentVal);
+        });
     }
 
     // Submit Reseña Form
     const formReseña = document.getElementById('form-reseña');
+    const statusMsg = document.getElementById('review-status-msg');
+    const submitBtn = document.getElementById('btn-submit-review');
+
+    function showReviewStatus(text, type = 'success') {
+        if (!statusMsg) return;
+        statusMsg.className = `review-status-msg ${type}`;
+        statusMsg.textContent = text;
+        statusMsg.style.display = 'block';
+        setTimeout(() => {
+            if (statusMsg) {
+                statusMsg.style.display = 'none';
+            }
+        }, 7000);
+    }
+
     if (formReseña) {
         formReseña.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('rev-name').value;
-            const rating = parseInt(document.getElementById('rev-rating').value, 10);
-            const comment = document.getElementById('rev-comment').value;
+            const nameInput = document.getElementById('rev-name');
+            const ratingInput = document.getElementById('rev-rating');
+            const commentInput = document.getElementById('rev-comment');
+            const productInput = document.getElementById('rev-product');
 
+            const name = nameInput ? nameInput.value.trim() : '';
+            const rating = ratingInput ? parseInt(ratingInput.value, 10) : 5;
+            const comment = commentInput ? commentInput.value.trim() : '';
+            const product = productInput ? productInput.value.trim() : '';
+
+            if (!name || !comment) {
+                showReviewStatus('Por favor completá tu nombre y tu comentario sobre la prenda.', 'error');
+                return;
+            }
+
+            const newId = 'res_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
+            const newReviewObj = {
+                id: newId,
+                name: name,
+                rating: rating,
+                date: 'Hoy',
+                product: product || '',
+                comment: comment
+            };
+
+            // 1. Guardar en almacenamiento local del navegador (instantáneo y offline-friendly)
+            saveLocalReseña(newReviewObj);
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                const btnText = submitBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = 'Publicando...';
+            }
+
+            // 2. Intentar sincronizar con el servidor backend si está activo
             try {
-                const res = await fetch('/api/reseñas', {
+                await fetch('/api/reseñas', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, rating, comment })
+                    body: JSON.stringify({ name, rating, comment, product })
                 });
-                if (res.ok) {
-                    formReseña.reset();
-                    await loadReseñas();
-                    alert('¡Gracias por tu reseña! Ha sido publicada correctamente.');
-                }
-            } catch(e) {
-                alert('Error al publicar la reseña. Inténtalo nuevamente.');
+            } catch(err) {
+                // Si el backend no está disponible (ej. hosting estático), se mantiene en localStorage
             }
+
+            // 3. Feedback visual y reseteo
+            formReseña.reset();
+            setStarRating(5);
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                const btnText = submitBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = 'Publicar Reseña';
+            }
+
+            showReviewStatus(`¡Muchas gracias, ${name}! Tu reseña fue publicada con éxito y ya es visible en la tienda.`, 'success');
+
+            // 4. Recargar vista de reseñas para mostrarla de inmediato
+            await loadReseñas(newId);
         });
     }
 

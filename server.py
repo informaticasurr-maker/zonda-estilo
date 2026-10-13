@@ -168,7 +168,7 @@ class ZondaHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        req_path = unquote(self.path)
+        req_path = unquote(self.path).split('?')[0].rstrip('/')
         content_length = int(self.headers.get('Content-Length', 0))
         post_data = self.rfile.read(content_length)
         
@@ -259,16 +259,20 @@ class ZondaHandler(http.server.SimpleHTTPRequestHandler):
         name = data.get('name', 'Anónimo').strip() or 'Anónimo'
         rating = int(data.get('rating', 5))
         comment = data.get('comment', '').strip()
+        product = data.get('product', '').strip()
         if not comment: raise ValueError("Comentario requerido")
 
         items = load_json(RESEÑAS_JSON_PATH)
-        items.insert(0, {
+        new_entry = {
             "id": f"res_{uuid.uuid4().hex[:6]}",
             "name": name,
             "rating": min(5, max(1, rating)),
             "date": "Hoy",
             "comment": comment
-        })
+        }
+        if product:
+            new_entry["product"] = product
+        items.insert(0, new_entry)
         save_json(RESEÑAS_JSON_PATH, items)
         self.send_success()
 
