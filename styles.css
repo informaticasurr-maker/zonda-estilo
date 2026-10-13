@@ -1255,3 +1255,35 @@ body {
     animation: highlightReview 3s ease forwards;
 }
 
+/* ==========================================================================
+   TOAST DE PROTECCIÓN DE SALIDA EN MÓVILES (BACK BUTTON CONFIRMATION)
+   ========================================================================== */
+.mobile-exit-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(25px);
+    background: rgba(18, 18, 22, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    z-index: 999999;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.mobile-exit-toast.active {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+

@@ -2,41 +2,73 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    // Tab Switching Logic
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', async () => {
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
+    // =========================================================================
+    // NAVEGACIÓN HISTORIAL Y BOTÓN VOLVER ATRÁS EN MÓVILES (SPA HISTORY API)
+    // =========================================================================
+    let allowExitOnBack = false;
+    let exitToastTimer = null;
 
-            btn.classList.add('active');
-            const targetId = btn.getAttribute('data-target');
-            const targetContent = document.getElementById(targetId);
-            if(targetContent) {
-                targetContent.classList.add('active');
-                if (targetId === 'tab-noticias') {
-                    await refreshNoticias();
-                } else if (targetId === 'tab-reseñas') {
-                    await loadReseñas();
-                }
-                // Re-trigger animations when switching tabs
-                observeElements();
+    function showExitToast() {
+        let toast = document.getElementById('mobile-exit-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'mobile-exit-toast';
+            toast.className = 'mobile-exit-toast';
+            toast.textContent = 'Presioná atrás otra vez para salir';
+            document.body.appendChild(toast);
+        }
+        toast.classList.add('active');
+        clearTimeout(exitToastTimer);
+        exitToastTimer = setTimeout(() => {
+            if (toast) toast.classList.remove('active');
+            allowExitOnBack = false;
+        }, 2200);
+    }
+
+    function getActiveTabId() {
+        const activeTab = document.querySelector('.tab-content.active');
+        return activeTab ? activeTab.id : 'tab-lookbook';
+    }
+
+    async function switchTab(targetId, updateHistory = true) {
+        if (!targetId) return;
+        const targetContent = document.getElementById(targetId);
+        if (!targetContent) return;
+
+        tabBtns.forEach(b => {
+            if (b.getAttribute('data-target') === targetId) {
+                b.classList.add('active');
+            } else {
+                b.classList.remove('active');
             }
         });
-    });
 
-    // Check URL hash on load (e.g. #reseñas or #tab-reseñas)
-    if (window.location.hash) {
-        try {
-            const rawHash = window.location.hash.replace('#', '');
-            const decodedHash = decodeURIComponent(rawHash);
-            const targetBtn = document.querySelector(`.tab-btn[data-target="${decodedHash}"]`) ||
-                              document.querySelector(`.tab-btn[data-target="tab-${decodedHash}"]`) ||
-                              document.querySelector(`.tab-btn[data-target="${rawHash}"]`);
-            if (targetBtn) {
-                targetBtn.click();
+        tabContents.forEach(c => c.classList.remove('active'));
+        targetContent.classList.add('active');
+
+        if (targetId === 'tab-noticias') {
+            await refreshNoticias();
+        } else if (targetId === 'tab-reseñas') {
+            await loadReseñas();
+        }
+        observeElements();
+
+        if (updateHistory) {
+            const currentHash = window.location.hash.replace('#', '');
+            if (currentHash !== targetId) {
+                history.pushState({ tab: targetId }, '', '#' + targetId);
             }
-        } catch(e) {}
+        }
     }
+
+    // Event listeners para botones de pestañas
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = btn.getAttribute('data-target');
+            switchTab(targetId, true);
+        });
+    });
 
     function escapeHTML(str) {
         if (!str) return '';
@@ -518,7 +550,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalBtn = document.getElementById('close-modal-compra');
     const formCompra = document.getElementById('form-compra');
 
-    function openModalCompra(title, price, imgSrc) {
+    function openModalCompra(title, price, imgSrc, updateHistory = true) {
         if (!modalCompra) return;
         document.getElementById('modal-product-title').textContent = title || 'Prenda Zonda';
         document.getElementById('modal-product-price').textContent = price || 'Consultar Precio';
@@ -527,19 +559,31 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('buy-product-price').value = price || '';
         
         modalCompra.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        if (updateHistory) {
+            history.pushState({ modalOpen: true, tab: getActiveTabId() }, '', '#lo-quiero');
+        }
     }
 
-    function closeModalCompra() {
-        if (modalCompra) modalCompra.classList.remove('active');
+    function closeModalCompra(fromPopState = false) {
+        if (!modalCompra) return;
+        const wasOpen = modalCompra.classList.contains('active');
+        modalCompra.classList.remove('active');
+        document.body.style.overflow = '';
+
+        if (wasOpen && !fromPopState && window.location.hash === '#lo-quiero') {
+            history.back();
+        }
     }
 
     if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', closeModalCompra);
+        closeModalBtn.addEventListener('click', () => closeModalCompra(false));
     }
 
     if (modalCompra) {
         modalCompra.addEventListener('click', (e) => {
-            if (e.target === modalCompra) closeModalCompra();
+            if (e.target === modalCompra) closeModalCompra(false);
         });
     }
 
@@ -609,9 +653,65 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Reset & Close Modal
             formCompra.reset();
-            closeModalCompra();
+            closeModalCompra(false);
         });
     }
+
+    // =========================================================================
+    // LISTENER GLOBAL DE RETROCESO (BOTÓN FÍSICO / GESTO ATRÁS DEL TELÉFONO)
+    // =========================================================================
+    window.addEventListener('popstate', (e) => {
+        // 1. Si el modal de compra está abierto, cerrarlo inmediatamente (no cerrar la página)
+        if (modalCompra && modalCompra.classList.contains('active')) {
+            closeModalCompra(true);
+            return;
+        }
+
+        // 2. Navegación hacia atrás entre pestañas
+        let targetTab = null;
+        if (e.state && e.state.tab) {
+            targetTab = e.state.tab;
+        } else if (window.location.hash && window.location.hash !== '#lo-quiero') {
+            try {
+                targetTab = decodeURIComponent(window.location.hash.replace('#', ''));
+            } catch(err) {
+                targetTab = window.location.hash.replace('#', '');
+            }
+        } else {
+            targetTab = 'tab-lookbook';
+        }
+
+        const currentActive = getActiveTabId();
+        if (targetTab && targetTab !== currentActive && document.getElementById(targetTab)) {
+            switchTab(targetTab, false);
+            return;
+        }
+
+        // 3. Si ya está en la pestaña inicial y presiona atrás en el teléfono:
+        // Evitar que la página se cierre de golpe por accidente y dar aviso amigable
+        if (!allowExitOnBack) {
+            allowExitOnBack = true;
+            showExitToast();
+            history.pushState({ tab: currentActive, rootGuard: true }, '', window.location.hash || '#' + currentActive);
+        } else {
+            // Confirmó salida presionando atrás dos veces seguidas en menos de 2.2 segundos
+            history.back();
+        }
+    });
+
+    // Inicializar estado seguro del historial para móviles
+    const defaultInitialTab = 'tab-lookbook';
+    let startTab = defaultInitialTab;
+    if (window.location.hash && window.location.hash !== '#lo-quiero') {
+        try {
+            const h = decodeURIComponent(window.location.hash.replace('#', ''));
+            if (document.getElementById(h)) startTab = h;
+        } catch(e) {}
+    }
+
+    history.replaceState({ tab: startTab, isHomeRoot: true }, '', '#' + startTab);
+    history.pushState({ tab: startTab, isReady: true }, '', '#' + startTab);
+    switchTab(startTab, false);
 
     // Initial reviews load if default active tab or on start
     loadReseñas();
