@@ -562,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Modal de Compra ("LO QUIERO..!!") y Visor de Foto Ampliada
+    // Modal de Compra ("LO QUIERO..!!") y Visor de Foto Ampliada con Navegación Secuencial
     const modalCompra = document.getElementById('modal-compra');
     const closeModalBtn = document.getElementById('close-modal-compra');
     const formCompra = document.getElementById('form-compra');
@@ -571,15 +571,103 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxZoom = document.getElementById('lightbox-zoom');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxTitle = document.getElementById('lightbox-title');
+    const lightboxCounter = document.getElementById('lightbox-counter');
     const closeLightboxBtn = document.getElementById('close-lightbox-zoom');
     const lightboxLoQuieroBtn = document.getElementById('lightbox-lo-quiero-btn');
     const modalImgContainer = document.getElementById('modalImgContainer');
+    const modalItemCounter = document.getElementById('modalItemCounter');
+
+    // Flechas de navegación en modal y lightbox
+    const modalPrevItemBtn = document.getElementById('modalPrevItemBtn');
+    const modalNextItemBtn = document.getElementById('modalNextItemBtn');
+    const lightboxPrevBtn = document.getElementById('lightboxPrevBtn');
+    const lightboxNextBtn = document.getElementById('lightboxNextBtn');
+
+    // Estado de la galería activa (Catálogo o Lookbook)
+    let currentGalleryItems = [];
+    let currentGalleryIndex = 0;
+
+    function getCollectionItems(type) {
+        let elements = [];
+        if (type === 'lookbook') {
+            elements = Array.from(document.querySelectorAll('.lookbook-grid .lookbook-item'));
+        } else {
+            // Por defecto catálogo
+            elements = Array.from(document.querySelectorAll('.products-grid .product-card'));
+        }
+
+        return elements.map(el => {
+            const h3 = el.querySelector('h3');
+            const priceEl = el.querySelector('.price');
+            const imgEl = el.querySelector('img');
+            return {
+                title: h3 ? h3.textContent.trim() : (type === 'lookbook' ? 'Lookbook Zonda' : 'Prenda Zonda'),
+                price: priceEl ? priceEl.textContent.trim() : (type === 'lookbook' ? 'Precio a consultar' : 'Consultar'),
+                imgSrc: imgEl ? imgEl.src : ''
+            };
+        }).filter(item => item.imgSrc !== '');
+    }
+
+    function renderCurrentGalleryItem(animate = true) {
+        if (!currentGalleryItems || currentGalleryItems.length === 0) return;
+        if (currentGalleryIndex < 0) currentGalleryIndex = currentGalleryItems.length - 1;
+        if (currentGalleryIndex >= currentGalleryItems.length) currentGalleryIndex = 0;
+
+        const item = currentGalleryItems[currentGalleryIndex];
+        const total = currentGalleryItems.length;
+        const countText = `${currentGalleryIndex + 1} / ${total}`;
+
+        // Elementos del Modal
+        const modalImg = document.getElementById('modal-product-img');
+        const modalTitle = document.getElementById('modal-product-title');
+        const modalPrice = document.getElementById('modal-product-price');
+        const buyTitleInput = document.getElementById('buy-product-title');
+        const buyPriceInput = document.getElementById('buy-product-price');
+
+        if (animate && modalImg) {
+            modalImg.style.opacity = '0.35';
+            setTimeout(() => {
+                modalImg.src = item.imgSrc;
+                modalImg.style.opacity = '1';
+            }, 120);
+        } else if (modalImg) {
+            modalImg.src = item.imgSrc;
+            modalImg.style.opacity = '1';
+        }
+
+        if (modalTitle) modalTitle.textContent = item.title;
+        if (modalPrice) modalPrice.textContent = item.price;
+        if (buyTitleInput) buyTitleInput.value = item.title;
+        if (buyPriceInput) buyPriceInput.value = item.price;
+        if (modalItemCounter) modalItemCounter.textContent = countText;
+
+        // Elementos del Lightbox (si está visible)
+        if (lightboxImg) {
+            if (animate) {
+                lightboxImg.style.opacity = '0.35';
+                setTimeout(() => {
+                    lightboxImg.src = item.imgSrc;
+                    lightboxImg.style.opacity = '1';
+                }, 120);
+            } else {
+                lightboxImg.src = item.imgSrc;
+                lightboxImg.style.opacity = '1';
+            }
+        }
+        if (lightboxTitle) lightboxTitle.textContent = item.title;
+        if (lightboxCounter) lightboxCounter.textContent = countText;
+    }
+
+    function navigateGallery(direction) {
+        if (!currentGalleryItems || currentGalleryItems.length <= 1) return;
+        currentGalleryIndex += direction;
+        renderCurrentGalleryItem(true);
+    }
 
     function openLightbox(imgSrc, title, updateHistory = true) {
-        if (!lightboxZoom || !imgSrc) return;
-        if (lightboxImg) lightboxImg.src = imgSrc;
-        if (lightboxTitle) lightboxTitle.textContent = title || 'Prenda Zonda';
+        if (!lightboxZoom) return;
         lightboxZoom.classList.add('active');
+        renderCurrentGalleryItem(false);
         if (updateHistory) {
             history.pushState({ lightboxOpen: true, tab: getActiveTabId() }, '', '#zoom-hd');
         }
@@ -595,10 +683,41 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (modalImgContainer) {
-        modalImgContainer.addEventListener('click', () => {
-            const currentImg = document.getElementById('modal-product-img').src;
-            const currentTitle = document.getElementById('modal-product-title').textContent;
-            openLightbox(currentImg, currentTitle, true);
+        modalImgContainer.addEventListener('click', (e) => {
+            // Evitar que el clic en las flechas abra el lightbox
+            if (e.target.closest('.modal-nav-arrow')) return;
+            const item = currentGalleryItems[currentGalleryIndex] || {};
+            openLightbox(item.imgSrc || '', item.title || '', true);
+        });
+    }
+
+    // Botones de navegación en Modal
+    if (modalPrevItemBtn) {
+        modalPrevItemBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateGallery(-1);
+        });
+    }
+
+    if (modalNextItemBtn) {
+        modalNextItemBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateGallery(1);
+        });
+    }
+
+    // Botones de navegación en Lightbox
+    if (lightboxPrevBtn) {
+        lightboxPrevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateGallery(-1);
+        });
+    }
+
+    if (lightboxNextBtn) {
+        lightboxNextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateGallery(1);
         });
     }
 
@@ -608,6 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (lightboxZoom) {
         lightboxZoom.addEventListener('click', (e) => {
+            if (e.target.closest('.lightbox-nav-arrow') || e.target.closest('.lightbox-bottom-bar')) return;
             if (e.target === lightboxZoom || e.target.classList.contains('lightbox-img-wrapper')) {
                 closeLightbox(false);
             }
@@ -624,13 +744,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function openModalCompra(title, price, imgSrc, updateHistory = true) {
+    function openModalCompra(title, price, imgSrc, updateHistory = true, collectionType = 'catalogo', clickedIndex = 0) {
         if (!modalCompra) return;
-        document.getElementById('modal-product-title').textContent = title || 'Prenda Zonda';
-        document.getElementById('modal-product-price').textContent = price || 'Consultar Precio';
-        document.getElementById('modal-product-img').src = imgSrc || '';
-        document.getElementById('buy-product-title').value = title || 'Prenda Zonda';
-        document.getElementById('buy-product-price').value = price || '';
+
+        // Cargar colección actual y fijar índice
+        currentGalleryItems = getCollectionItems(collectionType);
+        currentGalleryIndex = clickedIndex;
+
+        // Si por alguna razón la colección está vacía, usar el ítem recibido
+        if (!currentGalleryItems || currentGalleryItems.length === 0) {
+            currentGalleryItems = [{ title, price, imgSrc }];
+            currentGalleryIndex = 0;
+        }
+
+        renderCurrentGalleryItem(false);
         
         modalCompra.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -661,21 +788,85 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Navegación por teclado (Flechas Izquierda / Derecha)
+    document.addEventListener('keydown', (e) => {
+        const isModalOpen = modalCompra && modalCompra.classList.contains('active');
+        const isLightboxOpen = lightboxZoom && lightboxZoom.classList.contains('active');
+        if (!isModalOpen && !isLightboxOpen) return;
+
+        // Ignorar si el usuario está escribiendo en un input o textarea
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') return;
+
+        if (e.key === 'ArrowLeft') {
+            navigateGallery(-1);
+        } else if (e.key === 'ArrowRight') {
+            navigateGallery(1);
+        } else if (e.key === 'Escape') {
+            if (isLightboxOpen) {
+                closeLightbox(false);
+            } else if (isModalOpen) {
+                closeModalCompra(false);
+            }
+        }
+    });
+
+    // Soporte para gestos táctiles Swipe en Modal y Lightbox (Mobile Friendly)
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    function handleTouchStart(e) {
+        if (!e.touches || e.touches.length === 0) return;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }
+
+    function handleTouchEnd(e) {
+        if (!e.changedTouches || e.changedTouches.length === 0) return;
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const diffX = touchEndX - touchStartX;
+        const diffY = touchEndY - touchStartY;
+
+        // Si el swipe horizontal es mayor a 45px y supera al desplazamiento vertical
+        if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+            if (diffX < 0) {
+                navigateGallery(1); // Deslizar hacia la izquierda -> siguiente
+            } else {
+                navigateGallery(-1); // Deslizar hacia la derecha -> anterior
+            }
+        }
+    }
+
+    if (modalImgContainer) {
+        modalImgContainer.addEventListener('touchstart', handleTouchStart, { passive: true });
+        modalImgContainer.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
+
+    if (lightboxZoom) {
+        lightboxZoom.addEventListener('touchstart', handleTouchStart, { passive: true });
+        lightboxZoom.addEventListener('touchend', handleTouchEnd, { passive: true });
+    }
+
     // Event Delegation for clicking any product-card or lookbook-item
     document.addEventListener('click', (e) => {
         const productCard = e.target.closest('.product-card');
         const lookbookItem = e.target.closest('.lookbook-item');
 
         if (productCard) {
+            const allProducts = Array.from(document.querySelectorAll('.products-grid .product-card'));
+            const cardIndex = allProducts.indexOf(productCard);
             const title = productCard.querySelector('h3') ? productCard.querySelector('h3').textContent.trim() : 'Prenda Zonda';
             const price = productCard.querySelector('.price') ? productCard.querySelector('.price').textContent.trim() : 'Consultar';
             const img = productCard.querySelector('img') ? productCard.querySelector('img').src : '';
-            openModalCompra(title, price, img);
+            openModalCompra(title, price, img, true, 'catalogo', cardIndex >= 0 ? cardIndex : 0);
         } else if (lookbookItem) {
+            const allLookbook = Array.from(document.querySelectorAll('.lookbook-grid .lookbook-item'));
+            const itemIndex = allLookbook.indexOf(lookbookItem);
             const title = lookbookItem.querySelector('h3') ? lookbookItem.querySelector('h3').textContent.trim() : 'Remera Zonda (Lookbook)';
             const price = 'Precio a consultar';
             const img = lookbookItem.querySelector('img') ? lookbookItem.querySelector('img').src : '';
-            openModalCompra(title, price, img);
+            openModalCompra(title, price, img, true, 'lookbook', itemIndex >= 0 ? itemIndex : 0);
         }
     });
 

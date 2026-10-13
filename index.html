@@ -1496,7 +1496,20 @@
                 <!-- Columna Izquierda: Visor de Foto Ampliada en HD -->
                 <div class="modal-image-col">
                     <div class="modal-img-container" id="modalImgContainer" title="Hacé clic para ver en pantalla completa con zoom">
+                        <!-- Flecha Anterior -->
+                        <button id="modalPrevItemBtn" class="modal-nav-arrow modal-nav-prev" aria-label="Foto o producto anterior" type="button">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                        </button>
+                        
                         <img id="modal-product-img" src="" alt="Prenda Zonda" loading="eager">
+                        
+                        <!-- Flecha Siguiente -->
+                        <button id="modalNextItemBtn" class="modal-nav-arrow modal-nav-next" aria-label="Foto o producto siguiente" type="button">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+
+                        <!-- Indicador de Índice y Zoom -->
+                        <div class="modal-img-top-badge" id="modalItemCounter">1 / 1</div>
                         <div class="modal-img-zoom-hint">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
                             <span>Tocar para zoom HD</span>
@@ -1564,11 +1577,25 @@
     <!-- Visor Lightbox Pantalla Completa para Zoom Extremo de Detalles -->
     <div id="lightbox-zoom" class="lightbox-zoom-overlay">
         <button id="close-lightbox-zoom" class="lightbox-close-btn" aria-label="Cerrar visor">&times;</button>
+        
+        <!-- Flechas de Navegación en Lightbox -->
+        <button id="lightboxPrevBtn" class="lightbox-nav-arrow lightbox-nav-prev" aria-label="Foto anterior" type="button">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+
         <div class="lightbox-img-wrapper">
             <img id="lightbox-img" src="" alt="Detalle en alta definición">
         </div>
+
+        <button id="lightboxNextBtn" class="lightbox-nav-arrow lightbox-nav-next" aria-label="Foto siguiente" type="button">
+            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+
         <div class="lightbox-bottom-bar">
-            <span id="lightbox-title" class="lightbox-title"></span>
+            <div class="lightbox-info-group">
+                <span id="lightbox-counter" class="lightbox-counter">1 / 1</span>
+                <span id="lightbox-title" class="lightbox-title"></span>
+            </div>
             <button id="lightbox-lo-quiero-btn" class="lightbox-btn-lo-quiero">
                 <span>RESERVAR (LO QUIERO..!!)</span>
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
