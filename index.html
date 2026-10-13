@@ -1148,6 +1148,17 @@
 
             <!-- Tab: Reseñas de Clientes -->
             <section id="tab-reseñas" class="tab-content">
+                <div class="tab-nav-shortcuts">
+                    <button class="btn-tab-shortcut" data-target="tab-catalogo">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        <span>Volver al Catálogo</span>
+                    </button>
+                    <button class="btn-tab-shortcut" data-target="tab-lookbook">
+                        <span>Ver Lookbook</span>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </button>
+                </div>
+
                 <h2 class="section-title">Reseñas de Clientes</h2>
                 
                 <div class="reviews-summary-card">
@@ -1464,72 +1475,132 @@
                         <p class="review-comment">"Compré el combo remera + buzo y valió cada peso. La calidad se nota al instante y la onda que tienen es única."</p>
                     </article>
                 </div>
+
+                <div class="tab-nav-footer">
+                    <button class="btn-tab-shortcut-main" data-target="tab-catalogo">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                        <span>Volver al Catálogo de Prendas</span>
+                    </button>
+                </div>
             </section>
 
         </main>
     </div>
 
-    <!-- Modal de Solicitud de Compra "LO QUIERO..!!" -->
+    <!-- Modal de Solicitud de Compra y Vista Previa Ampliada ("LO QUIERO..!!") -->
     <div id="modal-compra" class="modal-overlay">
-        <div class="modal-card">
+        <div class="modal-card modal-card-expanded">
             <button id="close-modal-compra" class="modal-close-btn" aria-label="Cerrar">&times;</button>
             
-            <div class="modal-badge-title">LO QUIERO..!!</div>
-            <p class="modal-subtitle">Completá tus datos para solicitar esta prenda directamente con el vendedor</p>
-            
-            <div class="modal-product-preview">
-                <img id="modal-product-img" src="" alt="Prenda Zonda">
-                <div class="modal-product-details">
-                    <h4 id="modal-product-title">Remera Zonda</h4>
-                    <p id="modal-product-price" class="modal-price">$30.000</p>
+            <div class="modal-split-layout">
+                <!-- Columna Izquierda: Visor de Foto Ampliada en HD -->
+                <div class="modal-image-col">
+                    <div class="modal-img-container" id="modalImgContainer" title="Hacé clic para ver en pantalla completa con zoom">
+                        <img id="modal-product-img" src="" alt="Prenda Zonda" loading="eager">
+                        <div class="modal-img-zoom-hint">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                            <span>Tocar para zoom HD</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Información y Formulario de Reserva -->
+                <div class="modal-info-col">
+                    <div class="modal-header-info">
+                        <div class="modal-badge-title">LO QUIERO..!!</div>
+                        <h3 id="modal-product-title" class="modal-product-title">Remera Zonda</h3>
+                        <p id="modal-product-price" class="modal-product-price">$30.000</p>
+                        <p class="modal-subtitle">Completá tus datos para solicitar esta prenda directamente con el vendedor por WhatsApp</p>
+                    </div>
+
+                    <form id="form-compra" class="purchase-form">
+                        <input type="hidden" id="buy-product-title">
+                        <input type="hidden" id="buy-product-price">
+                        
+                        <div class="form-group">
+                            <label for="buy-name">Nombre y Apellido *</label>
+                            <input type="text" id="buy-name" placeholder="Ej: Juan Pérez" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="buy-phone">WhatsApp / Teléfono *</label>
+                                <input type="tel" id="buy-phone" placeholder="Ej: 261 123 4567" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="buy-size">Talle Deseado *</label>
+                                <select id="buy-size" required>
+                                    <option value="S">Talle S</option>
+                                    <option value="M" selected>Talle M</option>
+                                    <option value="L">Talle L</option>
+                                    <option value="XL">Talle XL</option>
+                                    <option value="XXL">Talle XXL</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="buy-address">Dirección de Entrega / Localidad</label>
+                            <input type="text" id="buy-address" placeholder="Ej: Av. San Martín 1234, Mendoza">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="buy-notes">Notas o consultas sobre el pedido (opcional)</label>
+                            <textarea id="buy-notes" rows="2" placeholder="Ej: ¿Tienen stock en color negro? Quisiera probarme en el showroom."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-lo-quiero">
+                            <span>RESERVAR (LO QUIERO..!!)</span>
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.418-.099.823z"/>
+                            </svg>
+                        </button>
+                    </form>
                 </div>
             </div>
-
-            <form id="form-compra" class="purchase-form">
-                <input type="hidden" id="buy-product-title">
-                <input type="hidden" id="buy-product-price">
-                
-                <div class="form-group">
-                    <label for="buy-name">Nombre y Apellido *</label>
-                    <input type="text" id="buy-name" placeholder="Ej: Juan Pérez" required>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="buy-phone">WhatsApp / Teléfono *</label>
-                        <input type="tel" id="buy-phone" placeholder="Ej: 261 123 4567" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="buy-size">Talle Deseado *</label>
-                        <select id="buy-size" required>
-                            <option value="S">Talle S</option>
-                            <option value="M" selected>Talle M</option>
-                            <option value="L">Talle L</option>
-                            <option value="XL">Talle XL</option>
-                            <option value="XXL">Talle XXL</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="buy-address">Dirección de Entrega / Localidad</label>
-                    <input type="text" id="buy-address" placeholder="Ej: Av. San Martín 1234, Mendoza">
-                </div>
-
-                <div class="form-group">
-                    <label for="buy-notes">Notas o consultas sobre el pedido (opcional)</label>
-                    <textarea id="buy-notes" rows="2" placeholder="Ej: ¿Tienen stock en color negro? Quisiera probarme en el showroom."></textarea>
-                </div>
-
-                <button type="submit" class="btn-lo-quiero">
-                    <span>LO QUIERO..!!</span>
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                        <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.418-.099.823z"/>
-                    </svg>
-                </button>
-            </form>
         </div>
     </div>
+
+    <!-- Visor Lightbox Pantalla Completa para Zoom Extremo de Detalles -->
+    <div id="lightbox-zoom" class="lightbox-zoom-overlay">
+        <button id="close-lightbox-zoom" class="lightbox-close-btn" aria-label="Cerrar visor">&times;</button>
+        <div class="lightbox-img-wrapper">
+            <img id="lightbox-img" src="" alt="Detalle en alta definición">
+        </div>
+        <div class="lightbox-bottom-bar">
+            <span id="lightbox-title" class="lightbox-title"></span>
+            <button id="lightbox-lo-quiero-btn" class="lightbox-btn-lo-quiero">
+                <span>RESERVAR (LO QUIERO..!!)</span>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.418-.099.823z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Barra de Navegación Inferior Fija para Celulares (Bottom Navigation Bar) -->
+    <nav class="mobile-bottom-nav" aria-label="Navegación Móvil">
+        <button class="bottom-nav-btn" data-target="tab-catalogo">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            <span>Catálogo</span>
+        </button>
+        <button class="bottom-nav-btn active" data-target="tab-lookbook">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            <span>Lookbook</span>
+        </button>
+        <button class="bottom-nav-btn" data-target="tab-noticias">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            <span>Noticias</span>
+        </button>
+        <button class="bottom-nav-btn" data-target="tab-faq">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <span>FAQ</span>
+        </button>
+        <button class="bottom-nav-btn" data-target="tab-reseñas">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            <span>Reseñas</span>
+        </button>
+    </nav>
 
     <script src="script.js"></script>
 </body>

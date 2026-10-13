@@ -527,16 +527,23 @@ body {
         letter-spacing: 1.5px;
     }
 
-    /* Barra de navegación horizontal deslizable estilo App */
+    /* Barra de navegación horizontal deslizable estilo App fija arriba (Sticky) */
     .interactive-menu {
+        position: sticky;
+        top: 0;
+        z-index: 99;
+        background: rgba(10, 10, 14, 0.96);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
         overflow-x: auto;
         white-space: nowrap;
         gap: 8px;
-        margin-bottom: 12px;
-        padding: 4px 2px 8px;
+        margin: 0 -14px 12px -14px;
+        padding: 8px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
     }
@@ -687,7 +694,7 @@ body {
 }
 
 .modal-card {
-    background: rgba(18, 18, 22, 0.95);
+    background: rgba(18, 18, 22, 0.98);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
     width: 100%;
@@ -701,10 +708,14 @@ body {
     overflow-y: auto;
 }
 
-@media (min-width: 640px) {
-    .modal-card {
-        padding: 35px 30px;
-        border-radius: 24px;
+.modal-card.modal-card-expanded {
+    max-width: 960px;
+}
+
+@media (min-width: 768px) {
+    .modal-card.modal-card-expanded {
+        padding: 32px 28px;
+        border-radius: 26px;
     }
 }
 
@@ -737,55 +748,252 @@ body {
     transform: rotate(90deg);
 }
 
+/* Layout Dividido: Foto Grande al Lado de Reserva */
+.modal-split-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+@media (min-width: 768px) {
+    .modal-split-layout {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        align-items: start;
+    }
+}
+
+/* Columna de Imagen Grande con Zoom */
+.modal-image-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-img-container {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #08080a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    cursor: zoom-in;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (min-width: 768px) {
+    .modal-img-container {
+        height: 100%;
+        min-height: 440px;
+        max-height: 540px;
+    }
+}
+
+.modal-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-img-container:hover img {
+    transform: scale(1.05);
+}
+
+.modal-img-zoom-hint {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Columna de Información y Formulario */
+.modal-info-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header-info {
+    margin-bottom: 15px;
+}
+
 .modal-badge-title {
-    font-size: 1.8rem;
+    font-size: 1.1rem;
     font-weight: 800;
     letter-spacing: 2px;
     text-transform: uppercase;
-    background: linear-gradient(135deg, #25D366 0%, #ffffff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-align: center;
+    color: var(--whatsapp-color);
+    margin-bottom: 4px;
+}
+
+.modal-product-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.modal-product-price {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 1px;
     margin-bottom: 6px;
 }
 
 .modal-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--text-secondary);
-    text-align: center;
-    margin-bottom: 25px;
+    line-height: 1.4;
+    margin-bottom: 15px;
 }
 
-.modal-product-preview {
+/* Visor Lightbox Pantalla Completa */
+.lightbox-zoom-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.lightbox-zoom-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.lightbox-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #fff;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.lightbox-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.lightbox-img-wrapper {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.lightbox-img-wrapper img {
+    max-width: 95vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+}
+
+.lightbox-bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 620px;
+    padding: 12px 20px;
+    background: rgba(25, 25, 30, 0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    margin-top: 10px;
     gap: 15px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 12px 16px;
-    border-radius: 16px;
-    margin-bottom: 20px;
 }
 
-.modal-product-preview img {
-    width: 65px;
-    height: 65px;
-    object-fit: cover;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.modal-product-details h4 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: #fff;
-}
-
-.modal-product-details .modal-price {
-    font-size: 1.1rem;
+.lightbox-title {
+    font-size: 1rem;
     font-weight: 700;
-    color: var(--whatsapp-color);
-    margin-top: 4px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lightbox-btn-lo-quiero {
+    background: var(--whatsapp-color);
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+}
+
+.lightbox-btn-lo-quiero:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.55);
+}
+
+@media (max-width: 640px) {
+    .lightbox-bottom-bar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+        gap: 10px;
+    }
+    .lightbox-title {
+        text-align: center;
+    }
+    .lightbox-btn-lo-quiero {
+        justify-content: center;
+        min-height: 48px;
+    }
 }
 
 .purchase-form, .review-form {
@@ -1284,6 +1492,142 @@ body {
 .mobile-exit-toast.active {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================================
+   BARRA DE NAVEGACIÓN INFERIOR FIJA EN MÓVILES (BOTTOM NAVIGATION BAR)
+   ========================================================================== */
+.mobile-bottom-nav {
+    display: none;
+}
+
+.tab-nav-shortcuts {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+}
+
+.btn-tab-shortcut {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--text-primary);
+    padding: 10px 18px;
+    border-radius: 22px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    transition: all 0.25s ease;
+}
+
+.btn-tab-shortcut:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.35);
+    transform: translateY(-2px);
+}
+
+.tab-nav-footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 35px;
+    padding: 20px 0 10px;
+}
+
+.btn-tab-shortcut-main {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.btn-tab-shortcut-main:hover {
+    background: #ffffff;
+    color: #050505;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding-bottom: 95px !important;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 64px;
+        background: rgba(12, 12, 16, 0.96);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        z-index: 9999;
+        align-items: center;
+        justify-content: space-around;
+        padding: 0 6px;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .bottom-nav-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-secondary);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        font-size: 0.72rem;
+        font-weight: 500;
+        cursor: pointer;
+        padding: 6px 8px;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        min-width: 55px;
+        min-height: 48px;
+        flex: 1;
+        max-width: 75px;
+    }
+
+    .bottom-nav-btn svg {
+        transition: transform 0.2s ease, stroke 0.2s ease;
+    }
+
+    .bottom-nav-btn:hover, .bottom-nav-btn.active {
+        color: #ffffff;
+    }
+
+    .bottom-nav-btn.active svg {
+        stroke: var(--whatsapp-color);
+        transform: translateY(-2px);
+    }
+
+    .bottom-nav-btn.active span {
+        color: #ffffff;
+        font-weight: 700;
+    }
+
+    .mobile-exit-toast {
+        bottom: 78px;
+    }
 }
 
 

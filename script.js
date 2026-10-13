@@ -30,12 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
         return activeTab ? activeTab.id : 'tab-lookbook';
     }
 
-    async function switchTab(targetId, updateHistory = true) {
+    async function switchTab(targetId, updateHistory = true, shouldScroll = false) {
         if (!targetId) return;
         const targetContent = document.getElementById(targetId);
         if (!targetContent) return;
 
-        tabBtns.forEach(b => {
+        // 1. Sincronizar botones del menú de pestañas
+        document.querySelectorAll('.tab-btn').forEach(b => {
             if (b.getAttribute('data-target') === targetId) {
                 b.classList.add('active');
             } else {
@@ -43,6 +44,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // 2. Sincronizar botones de la barra inferior móvil
+        document.querySelectorAll('.bottom-nav-btn').forEach(b => {
+            if (b.getAttribute('data-target') === targetId) {
+                b.classList.add('active');
+            } else {
+                b.classList.remove('active');
+            }
+        });
+
+        // 3. Activar pestaña objetivo
         tabContents.forEach(c => c.classList.remove('active'));
         targetContent.classList.add('active');
 
@@ -53,6 +64,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         observeElements();
 
+        // 4. Scroll suave hacia arriba para no desorientar al usuario en móviles
+        if (shouldScroll) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         if (updateHistory) {
             const currentHash = window.location.hash.replace('#', '');
             if (currentHash !== targetId) {
@@ -61,13 +77,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Event listeners para botones de pestañas
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
+    // Event delegation para todos los botones de navegación entre pestañas
+    document.addEventListener('click', (e) => {
+        const navBtn = e.target.closest('[data-target]');
+        if (navBtn && (navBtn.classList.contains('tab-btn') || navBtn.classList.contains('bottom-nav-btn') || navBtn.classList.contains('btn-tab-shortcut') || navBtn.classList.contains('btn-tab-shortcut-main'))) {
             e.preventDefault();
-            const targetId = btn.getAttribute('data-target');
-            switchTab(targetId, true);
-        });
+            const targetId = navBtn.getAttribute('data-target');
+            switchTab(targetId, true, true);
+        }
     });
 
     function escapeHTML(str) {
@@ -545,10 +562,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Modal de Compra ("LO QUIERO..!!")
+    // Modal de Compra ("LO QUIERO..!!") y Visor de Foto Ampliada
     const modalCompra = document.getElementById('modal-compra');
     const closeModalBtn = document.getElementById('close-modal-compra');
     const formCompra = document.getElementById('form-compra');
+
+    // Visor Lightbox Pantalla Completa
+    const lightboxZoom = document.getElementById('lightbox-zoom');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxTitle = document.getElementById('lightbox-title');
+    const closeLightboxBtn = document.getElementById('close-lightbox-zoom');
+    const lightboxLoQuieroBtn = document.getElementById('lightbox-lo-quiero-btn');
+    const modalImgContainer = document.getElementById('modalImgContainer');
+
+    function openLightbox(imgSrc, title, updateHistory = true) {
+        if (!lightboxZoom || !imgSrc) return;
+        if (lightboxImg) lightboxImg.src = imgSrc;
+        if (lightboxTitle) lightboxTitle.textContent = title || 'Prenda Zonda';
+        lightboxZoom.classList.add('active');
+        if (updateHistory) {
+            history.pushState({ lightboxOpen: true, tab: getActiveTabId() }, '', '#zoom-hd');
+        }
+    }
+
+    function closeLightbox(fromPopState = false) {
+        if (!lightboxZoom) return;
+        const wasOpen = lightboxZoom.classList.contains('active');
+        lightboxZoom.classList.remove('active');
+        if (wasOpen && !fromPopState && window.location.hash === '#zoom-hd') {
+            history.back();
+        }
+    }
+
+    if (modalImgContainer) {
+        modalImgContainer.addEventListener('click', () => {
+            const currentImg = document.getElementById('modal-product-img').src;
+            const currentTitle = document.getElementById('modal-product-title').textContent;
+            openLightbox(currentImg, currentTitle, true);
+        });
+    }
+
+    if (closeLightboxBtn) {
+        closeLightboxBtn.addEventListener('click', () => closeLightbox(false));
+    }
+
+    if (lightboxZoom) {
+        lightboxZoom.addEventListener('click', (e) => {
+            if (e.target === lightboxZoom || e.target.classList.contains('lightbox-img-wrapper')) {
+                closeLightbox(false);
+            }
+        });
+    }
+
+    if (lightboxLoQuieroBtn) {
+        lightboxLoQuieroBtn.addEventListener('click', () => {
+            closeLightbox(false);
+            const buyNameInput = document.getElementById('buy-name');
+            if (buyNameInput) {
+                setTimeout(() => buyNameInput.focus(), 250);
+            }
+        });
+    }
 
     function openModalCompra(title, price, imgSrc, updateHistory = true) {
         if (!modalCompra) return;
@@ -661,6 +735,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // LISTENER GLOBAL DE RETROCESO (BOTÓN FÍSICO / GESTO ATRÁS DEL TELÉFONO)
     // =========================================================================
     window.addEventListener('popstate', (e) => {
+        // 0. Si el visor lightbox está abierto, cerrarlo inmediatamente
+        if (lightboxZoom && lightboxZoom.classList.contains('active')) {
+            closeLightbox(true);
+            return;
+        }
+
         // 1. Si el modal de compra está abierto, cerrarlo inmediatamente (no cerrar la página)
         if (modalCompra && modalCompra.classList.contains('active')) {
             closeModalCompra(true);
