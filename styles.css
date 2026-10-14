@@ -645,11 +645,34 @@ body {
         transform: none;
     }
 
-    /* Ocultar elementos secundarios del sidebar en móvil */
-    .sidebar-video-reel {
-        display: none !important;
-    }
+    /* Botones de Acceso Directo a WhatsApp e Instagram Visibles en Móviles */
     .contact-area {
+        display: flex !important;
+        flex-direction: row;
+        width: 100%;
+        gap: 8px;
+        margin: 4px 0 2px 0;
+        padding-top: 2px;
+    }
+
+    .btn-whatsapp, .btn-instagram {
+        flex: 1;
+        min-height: 40px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 8px 12px;
+        border-radius: 20px;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-whatsapp svg, .btn-instagram svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Ocultar elementos secundarios pesados del sidebar en móvil */
+    .sidebar-video-reel {
         display: none !important;
     }
 
