@@ -591,52 +591,58 @@ body {
         opacity: 0.85;
     }
 
-    /* Menús de cada pestaña: perfectamente ordenados uno al lado del otro */
+    /* Menús de cada pestaña: Segmented Bar ajustada al 100% del ancho sin espacios vacíos */
     .interactive-menu {
         width: 100%;
+        max-width: 100%;
         position: static;
         display: flex;
         flex-direction: row;
-        justify-content: flex-start;
+        justify-content: space-between;
         align-items: center;
-        overflow-x: auto;
-        white-space: nowrap;
-        gap: 8px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 3px;
+        gap: 3px;
         margin: 4px 0 2px 0;
-        padding: 4px 6px 6px 6px;
-        border-bottom: none;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        scroll-snap-type: x mandatory;
+        overflow: hidden;
     }
     .interactive-menu::-webkit-scrollbar {
         display: none;
     }
     .tab-btn {
-        min-height: 40px;
+        flex: 1;
+        min-width: 0;
+        min-height: 38px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 7px 16px;
+        padding: 6px 2px;
         border-radius: 20px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        font-size: 0.82rem;
+        background: transparent;
+        border: none;
+        font-size: 0.76rem;
         font-weight: 500;
-        color: rgba(255, 255, 255, 0.75);
+        letter-spacing: 0.2px;
+        color: rgba(255, 255, 255, 0.7);
         white-space: nowrap;
-        flex-shrink: 0;
-        scroll-snap-align: start;
+        text-align: center;
         transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+    }
+    .tab-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.08);
+        transform: none;
     }
     .tab-btn.active {
         background: #ffffff;
         color: #050505;
-        border-color: #ffffff;
-        border-bottom: 1px solid #ffffff;
+        border: none;
         font-weight: 700;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
         transform: none;
-        box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
     }
 
     /* Ocultar elementos secundarios del sidebar en móvil */
