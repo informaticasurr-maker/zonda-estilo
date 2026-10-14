@@ -57,14 +57,30 @@ body {
     flex-shrink: 0;
 }
 
+.brand-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(0, 180, 255, 0.65));
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
 .brand h1 {
     font-size: 2.2rem;
     font-weight: 800;
     letter-spacing: 4px;
     text-transform: uppercase;
-    background: linear-gradient(to right, #fff, #777);
+    background: linear-gradient(to right, #fff, #999);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin: 0;
 }
 
 .brand p {
@@ -540,31 +556,42 @@ body {
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
 
-    /* ZONDA y su logotipo arriba de todo */
+    /* ZONDA y su logotipo oficial arriba de todo */
     .brand {
-        margin: 0 0 2px 0;
+        margin: 0 0 4px 0;
         text-align: center;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
     }
+    .brand-header {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    .brand-logo {
+        width: 36px;
+        height: 36px;
+        filter: drop-shadow(0 0 12px rgba(0, 180, 255, 0.8));
+    }
     .brand h1 {
         font-size: 1.6rem;
         font-weight: 800;
-        letter-spacing: 4px;
-        line-height: 1.1;
+        letter-spacing: 3.5px;
+        line-height: 1;
         margin: 0;
     }
     .brand p {
         font-size: 0.65rem;
         letter-spacing: 1.5px;
-        margin-top: 2px;
+        margin-top: 3px;
         color: var(--text-secondary);
         opacity: 0.85;
     }
 
-    /* Menús de cada pestaña: justo abajo, uno al lado del otro */
+    /* Menús de cada pestaña: perfectamente ordenados uno al lado del otro */
     .interactive-menu {
         width: 100%;
         position: static;
@@ -576,10 +603,11 @@ body {
         white-space: nowrap;
         gap: 8px;
         margin: 4px 0 2px 0;
-        padding: 4px 4px 6px 4px;
+        padding: 4px 6px 6px 6px;
         border-bottom: none;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
+        scroll-snap-type: x mandatory;
     }
     .interactive-menu::-webkit-scrollbar {
         display: none;
@@ -589,15 +617,17 @@ body {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 6px 16px;
+        padding: 7px 16px;
         border-radius: 20px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        font-size: 0.84rem;
-        color: var(--text-secondary);
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.75);
         white-space: nowrap;
         flex-shrink: 0;
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        scroll-snap-align: start;
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .tab-btn.active {
         background: #ffffff;
@@ -606,7 +636,7 @@ body {
         border-bottom: 1px solid #ffffff;
         font-weight: 700;
         transform: none;
-        box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+        box-shadow: 0 4px 14px rgba(255, 255, 255, 0.3);
     }
 
     /* Ocultar elementos secundarios del sidebar en móvil */
