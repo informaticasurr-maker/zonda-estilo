@@ -512,47 +512,71 @@ body {
         font-size: 14px;
     }
 
-    /* Estructura vertical optimizada: los menús quedan ARRIBA de las fotos y el catálogo tiene máximo espacio */
+    /* Rediseño automático móvil: contenedor en columna 100% fluido */
+    .app-container {
+        flex-direction: column;
+        width: 100%;
+        min-height: 100vh;
+    }
+
+    /* Cabecera superior fija: ZONDA y logo arriba de todo, menús justo abajo */
     .sidebar {
+        width: 100% !important;
+        height: auto !important;
         position: sticky;
         top: 0;
-        z-index: 100;
-        padding: 10px 14px 8px;
-        background: rgba(10, 10, 14, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        z-index: 1000;
+        padding: 10px 14px 6px;
+        background: rgba(8, 8, 12, 0.96);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        align-items: center;
+        gap: 4px;
+        margin: 0;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
     }
 
+    /* ZONDA y su logotipo arriba de todo */
     .brand {
-        margin-bottom: 4px;
+        margin: 0 0 2px 0;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
     .brand h1 {
-        font-size: 1.55rem;
-        letter-spacing: 3px;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: 4px;
         line-height: 1.1;
+        margin: 0;
     }
     .brand p {
-        font-size: 0.68rem;
-        letter-spacing: 1.2px;
+        font-size: 0.65rem;
+        letter-spacing: 1.5px;
         margin-top: 2px;
+        color: var(--text-secondary);
+        opacity: 0.85;
     }
 
-    /* Barra de pestañas horizontal deslizable fija ARRIBA DE LAS FOTOS */
+    /* Menús de cada pestaña: justo abajo, uno al lado del otro */
     .interactive-menu {
+        width: 100%;
         position: static;
+        display: flex;
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
         overflow-x: auto;
         white-space: nowrap;
         gap: 8px;
-        margin: 4px -14px 2px -14px;
-        padding: 4px 14px 6px 14px;
+        margin: 4px 0 2px 0;
+        padding: 4px 4px 6px 4px;
         border-bottom: none;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
@@ -561,19 +585,19 @@ body {
         display: none;
     }
     .tab-btn {
-        min-height: 42px;
+        min-height: 40px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         padding: 6px 16px;
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.14);
         font-size: 0.84rem;
         color: var(--text-secondary);
         white-space: nowrap;
         flex-shrink: 0;
-        transition: all 0.25s ease;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .tab-btn.active {
         background: #ffffff;
@@ -582,25 +606,26 @@ body {
         border-bottom: 1px solid #ffffff;
         font-weight: 700;
         transform: none;
-        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
     }
 
-    /* El video reel se oculta del encabezado sticky en móvil para dar 100% visibilidad al catálogo de fotos */
+    /* Ocultar elementos secundarios del sidebar en móvil */
     .sidebar-video-reel {
         display: none !important;
     }
-
-    /* Los botones de contacto se integran de forma muy compacta en la barra superior */
     .contact-area {
-        display: none; /* En móvil se accede por la ficha/modal de compra y WhatsApp directo */
+        display: none !important;
     }
 
-    /* Contenido principal móvil: arranca inmediatamente pegado a los menús */
+    /* Abajo el catálogo con las fotos o según la pestaña seleccionada */
     .main-content {
-        padding: 12px 10px;
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 14px 10px 100px 10px !important;
+        min-height: calc(100vh - 120px);
     }
     .section-title {
-        font-size: 1.3rem;
+        font-size: 1.25rem;
         letter-spacing: 1px;
         margin-bottom: 14px;
         padding-bottom: 8px;
