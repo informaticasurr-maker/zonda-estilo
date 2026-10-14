@@ -506,44 +506,54 @@ body {
     }
 }
 
-/* Responsive Mobile-First Optimizado (Celulares <= 640px) */
-@media (max-width: 640px) {
+/* Responsive Mobile-First Optimizado (Celulares & Tablets pequeñas <= 768px) */
+@media (max-width: 768px) {
     body {
         font-size: 14px;
     }
 
+    /* Estructura vertical optimizada: los menús quedan ARRIBA de las fotos y el catálogo tiene máximo espacio */
     .sidebar {
-        padding: 16px 14px 12px;
-    }
-    .brand {
-        margin-bottom: 12px;
-    }
-    .brand h1 {
-        font-size: 1.8rem;
-        letter-spacing: 3px;
-    }
-    .brand p {
-        font-size: 0.72rem;
-        letter-spacing: 1.5px;
-    }
-
-    /* Barra de navegación horizontal deslizable estilo App fija arriba (Sticky) */
-    .interactive-menu {
         position: sticky;
         top: 0;
-        z-index: 99;
-        background: rgba(10, 10, 14, 0.96);
+        z-index: 100;
+        padding: 10px 14px 8px;
+        background: rgba(10, 10, 14, 0.95);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .brand {
+        margin-bottom: 4px;
+        text-align: center;
+    }
+    .brand h1 {
+        font-size: 1.55rem;
+        letter-spacing: 3px;
+        line-height: 1.1;
+    }
+    .brand p {
+        font-size: 0.68rem;
+        letter-spacing: 1.2px;
+        margin-top: 2px;
+    }
+
+    /* Barra de pestañas horizontal deslizable fija ARRIBA DE LAS FOTOS */
+    .interactive-menu {
+        position: static;
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
         overflow-x: auto;
         white-space: nowrap;
         gap: 8px;
-        margin: 0 -14px 12px -14px;
-        padding: 8px 14px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        margin: 4px -14px 2px -14px;
+        padding: 4px 14px 6px 14px;
+        border-bottom: none;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: none;
     }
@@ -551,15 +561,15 @@ body {
         display: none;
     }
     .tab-btn {
-        min-height: 44px;
+        min-height: 42px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 8px 16px;
-        border-radius: 22px;
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        font-size: 0.85rem;
+        padding: 6px 16px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        font-size: 0.84rem;
         color: var(--text-secondary);
         white-space: nowrap;
         flex-shrink: 0;
@@ -570,42 +580,33 @@ body {
         color: #050505;
         border-color: #ffffff;
         border-bottom: 1px solid #ffffff;
-        padding-bottom: 8px;
         font-weight: 700;
         transform: none;
+        box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
     }
 
-    /* Video Reel compacto para no tapar el catálogo en móvil */
+    /* El video reel se oculta del encabezado sticky en móvil para dar 100% visibilidad al catálogo de fotos */
     .sidebar-video-reel {
-        height: 180px !important;
-        margin: 6px 0 10px 0 !important;
-    }
-    #videoSoundBtn, #prevVideoBtn, #nextVideoBtn {
-        width: 44px !important;
-        height: 44px !important;
-        font-size: 1.1rem !important;
+        display: none !important;
     }
 
+    /* Los botones de contacto se integran de forma muy compacta en la barra superior */
     .contact-area {
-        gap: 8px;
-        margin-top: 6px;
-        padding-top: 6px;
-    }
-    .btn-whatsapp, .btn-instagram {
-        min-height: 44px;
-        font-size: 0.82rem;
-        padding: 10px 12px;
+        display: none; /* En móvil se accede por la ficha/modal de compra y WhatsApp directo */
     }
 
-    /* Contenido principal móvil */
+    /* Contenido principal móvil: arranca inmediatamente pegado a los menús */
     .main-content {
-        padding: 18px 12px;
+        padding: 12px 10px;
     }
     .section-title {
-        font-size: 1.5rem;
-        letter-spacing: 1.5px;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+        margin-bottom: 14px;
+        padding-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     /* Grilla de productos en 2 columnas perfectas para móviles */
