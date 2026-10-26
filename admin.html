@@ -139,6 +139,14 @@
         </h1>
         <p style="color: var(--text-secondary); margin-bottom: 30px;">Panel de control interno de Zonda Streetwear</p>
 
+        <div id="backendStatusNotice" style="display: none; background: rgba(220, 39, 67, 0.12); border: 1px solid #dc2743; color: #ff8599; padding: 16px 20px; border-radius: 12px; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">
+            <strong>⚠️ Modo Solo Lectura (Alojamiento en Vercel):</strong><br>
+            Estás accediendo al panel desde la nube en Vercel, donde la web funciona como catálogo estático. Para subir fotos, modificar precios y guardar cambios permanentes en el código y catálogo:<br>
+            1. En tu computadora local, iniciá el servidor ejecutando: <code>python3 server.py</code><br>
+            2. Abrí el panel local en: <a href="http://localhost:8000/admin.html" target="_blank" style="color: #fff; font-weight: bold; text-decoration: underline;">http://localhost:8000/admin.html</a><br>
+            3. Guardá los cambios y luego ejecutá <code>git push</code> para actualizar Vercel automáticamente.
+        </div>
+
         <div class="tabs">
             <div class="tab active" onclick="switchTab('lookbook')">Lookbook</div>
             <div class="tab" onclick="switchTab('catalogo')">Catálogo</div>
@@ -323,6 +331,13 @@
         function showDashboard() {
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminDashboard').style.display = 'block';
+
+            const isVercel = window.location.hostname.includes('vercel.app') || sessionStorage.getItem('zonda_token') === 'session_vercel_authenticated';
+            const notice = document.getElementById('backendStatusNotice');
+            if (notice) {
+                notice.style.display = isVercel ? 'block' : 'none';
+            }
+
             loadGalleries();
         }
 
@@ -516,6 +531,8 @@
             } catch(e) {}
         }
 
+        const BACKEND_UNAVAILABLE_MSG = "No se pudo conectar con el servidor de guardado (server.py).\n\nEn Vercel el sitio funciona como catálogo estático (solo lectura). Para guardar cambios en el catálogo o subir fotos:\n1. Abrí la terminal y ejecutá 'python3 server.py'\n2. Entrá a http://localhost:8000/admin.html\n3. Guardá los cambios y subilos con git push.";
+
         async function updateItem(type, id) {
             let body = { id: id };
             if (type === 'lookbook') body.description = document.getElementById('desc_' + id).value;
@@ -524,13 +541,23 @@
                 body.price = document.getElementById('price_' + id).value;
             }
             
-            await authFetch(`/api/${type}/update`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-            alert("Cambios guardados correctamente.");
-            loadGalleries();
+            try {
+                const res = await authFetch(`/api/${type}/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (data.success) {
+                    alert("Cambios guardados correctamente.");
+                    loadGalleries();
+                } else {
+                    alert("Error al guardar: " + (data.error || 'error desconocido'));
+                }
+            } catch(e) {
+                alert(BACKEND_UNAVAILABLE_MSG);
+            }
         }
 
         async function updateNewsItem(id) {
@@ -559,6 +586,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
                 const result = await res.json();
                 if (result.success) {
                     alert("Noticia actualizada correctamente.");
@@ -567,7 +595,7 @@
                     alert("Error al actualizar: " + (result.error || "error desconocido"));
                 }
             } catch(e) {
-                alert("Error de conexión al actualizar la noticia.");
+                alert(BACKEND_UNAVAILABLE_MSG);
             }
         }
 
@@ -585,15 +613,18 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ icon, title, category, content })
                 });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
                 const result = await res.json();
                 if(result.success) {
                     showAlert('alert_faq', 'success', '¡Pregunta Frecuente agregada con éxito!');
                     document.getElementById('faqTitle').value = '';
                     document.getElementById('faqContent').value = '';
                     loadGalleries();
+                } else {
+                    showAlert('alert_faq', 'error', 'Error: ' + (result.error || 'error desconocido'));
                 }
             } catch(e) {
-                showAlert('alert_faq', 'error', 'Error al agregar.');
+                showAlert('alert_faq', 'error', 'Error al conectar con el servidor.');
             }
         }
 
@@ -603,23 +634,38 @@
             const category = document.getElementById('faq_cat_' + id).value;
             const content = document.getElementById('faq_content_' + id).value;
 
-            await authFetch('/api/faq/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, icon, title, category, content })
-            });
-            alert("Pregunta Frecuente actualizada.");
-            loadGalleries();
+            try {
+                const res = await authFetch('/api/faq/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, icon, title, category, content })
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (data.success) {
+                    alert("Pregunta Frecuente actualizada.");
+                    loadGalleries();
+                } else {
+                    alert("Error: " + (data.error || 'error desconocido'));
+                }
+            } catch(e) {
+                alert(BACKEND_UNAVAILABLE_MSG);
+            }
         }
 
         async function deleteFaqItem(id) {
             if(!confirm("¿Eliminar esta Pregunta Frecuente?")) return;
-            await authFetch('/api/faq/delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
-            });
-            loadGalleries();
+            try {
+                const res = await authFetch('/api/faq/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                loadGalleries();
+            } catch(e) {
+                alert(BACKEND_UNAVAILABLE_MSG);
+            }
         }
 
         async function updateReseñaItem(id) {
@@ -627,33 +673,53 @@
             const rating = parseInt(document.getElementById('res_rating_' + id).value, 10);
             const comment = document.getElementById('res_comment_' + id).value;
 
-            await authFetch('/api/reseñas/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, name, rating, comment })
-            });
-            alert("Reseña actualizada.");
-            loadGalleries();
+            try {
+                const res = await authFetch('/api/reseñas/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, rating, comment })
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const data = await res.json();
+                if (data.success) {
+                    alert("Reseña actualizada.");
+                    loadGalleries();
+                } else {
+                    alert("Error: " + (data.error || 'error desconocido'));
+                }
+            } catch(e) {
+                alert(BACKEND_UNAVAILABLE_MSG);
+            }
         }
 
         async function deleteReseñaItem(id) {
             if(!confirm("¿Eliminar esta reseña?")) return;
-            await authFetch('/api/reseñas/delete', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id })
-            });
-            loadGalleries();
+            try {
+                const res = await authFetch('/api/reseñas/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                loadGalleries();
+            } catch(e) {
+                alert(BACKEND_UNAVAILABLE_MSG);
+            }
         }
 
         async function deleteItem(type, id) {
             if(!confirm("¿Estás seguro que deseas eliminar este elemento?")) return;
-            await authFetch(`/api/${type}/delete`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: id })
-            });
-            loadGalleries();
+            try {
+                const res = await authFetch(`/api/${type}/delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                loadGalleries();
+            } catch(e) {
+                alert(BACKEND_UNAVAILABLE_MSG);
+            }
         }
 
         async function uploadPhoto(type) {
