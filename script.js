@@ -99,8 +99,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function refreshNoticias() {
         try {
-            const res = await fetch('/api/noticias?_t=' + Date.now());
-            const data = await res.json();
+            let data = [];
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    const snap = await db.collection('noticias').get();
+                    if (!snap.empty) {
+                        snap.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+                    }
+                } catch(e) {}
+            }
+            if (!data || data.length === 0) {
+                const res = await fetch('/api/noticias?_t=' + Date.now());
+                if (res.ok) data = await res.json();
+            }
             const grid = document.querySelector('#tab-noticias .news-grid');
             if (!grid) return;
 
@@ -300,6 +312,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchReseñasData() {
         let list = [];
+        const db = window.firebaseDb;
+        if (db) {
+            try {
+                const snap = await db.collection('reseñas').get();
+                if (!snap.empty) {
+                    snap.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+                    return list;
+                }
+            } catch(fbErr) {
+                console.warn("Firestore reviews fallback to local:", fbErr);
+            }
+        }
         try {
             const res = await fetch('/api/reseñas?_t=' + Date.now());
             if (res.ok) {
@@ -534,7 +558,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnText) btnText.textContent = 'Publicando...';
             }
 
-            // 2. Intentar sincronizar con el servidor backend si está activo
+            // 2. Intentar guardar en Firestore y en servidor local
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('reseñas').doc(newId).set(newReviewObj);
+                } catch(fbErr) {
+                    console.warn("Firestore save review error:", fbErr);
+                }
+            }
             try {
                 await fetch('/api/reseñas', {
                     method: 'POST',
@@ -542,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ name, rating, comment, product })
                 });
             } catch(err) {
-                // Si el backend no está disponible (ej. hosting estático), se mantiene en localStorage
+                // Si el backend no está disponible, se mantiene en Firestore / localStorage
             }
 
             // 3. Feedback visual y reseteo
@@ -882,20 +914,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const buyer_address = document.getElementById('buy-address').value.trim() || 'No especificada / A convenir';
             const buyer_notes = document.getElementById('buy-notes').value.trim() || 'Sin observaciones';
 
-            // 1. Send Order to Backend
+            // 1. Send Order to Backend & Firestore
+            const orderPayload = {
+                product_title,
+                product_price,
+                buyer_name,
+                buyer_phone,
+                buyer_size,
+                buyer_address,
+                buyer_notes,
+                timestamp: new Date()
+            };
+
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    const orderId = 'order_' + Date.now();
+                    await db.collection('pedidos').doc(orderId).set(orderPayload);
+                } catch(fbErr) {
+                    console.warn("Firestore order save error:", fbErr);
+                }
+            }
             try {
                 await fetch('/api/pedidos', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        product_title,
-                        product_price,
-                        buyer_name,
-                        buyer_phone,
-                        buyer_size,
-                        buyer_address,
-                        buyer_notes
-                    })
+                    body: JSON.stringify(orderPayload)
                 });
             } catch(e) {}
 
@@ -984,8 +1028,64 @@ document.addEventListener('DOMContentLoaded', () => {
     history.pushState({ tab: startTab, isReady: true }, '', '#' + startTab);
     switchTab(startTab, false);
 
+    async function initFirestoreStorefront() {
+        const db = window.firebaseDb;
+        if (!db) return;
+
+        // 1. Sync Catalogo from Firestore if available
+        try {
+            const catSnap = await db.collection('catalogo').get();
+            if (!catSnap.empty) {
+                let catList = [];
+                catSnap.forEach(doc => catList.push({ id: doc.id, ...doc.data() }));
+                catList.sort((a,b) => (a.order || 0) - (b.order || 0));
+                const catGrid = document.querySelector('#tab-catalogo .products-grid') || document.querySelector('.products-grid');
+                if (catGrid && catList.length > 0) {
+                    catGrid.innerHTML = catList.map(item => `
+                        <article class="product-card">
+                            <div class="product-img">
+                                <img src="${encodeURI(item.src || '')}" alt="${escapeHTML(item.title || '')}" loading="lazy">
+                            </div>
+                            <div class="product-info">
+                                <h3>${escapeHTML(item.title || '')}</h3>
+                                <p class="price">${escapeHTML(item.price || '')}</p>
+                            </div>
+                        </article>
+                    `).join('');
+                }
+            }
+        } catch(e) {}
+
+        // 2. Sync Lookbook from Firestore if available
+        try {
+            const lbSnap = await db.collection('lookbook').get();
+            if (!lbSnap.empty) {
+                let lbList = [];
+                lbSnap.forEach(doc => lbList.push({ id: doc.id, ...doc.data() }));
+                lbList.sort((a,b) => (a.order || 0) - (b.order || 0));
+                const lbGrid = document.querySelector('#tab-lookbook .lookbook-grid') || document.querySelector('.lookbook-grid');
+                if (lbGrid && lbList.length > 0) {
+                    lbGrid.innerHTML = lbList.map(item => {
+                        const descHtml = item.description ? `<div class="product-info" style="pointer-events:none;"><h3 style="font-size:0.9rem;">${escapeHTML(item.description)}</h3></div>` : '';
+                        return `
+                            <article class="lookbook-item" style="position:relative;">
+                                <img src="${encodeURI(item.src || '')}" alt="Modelo Zonda" loading="lazy">
+                                ${descHtml}
+                            </article>
+                        `;
+                    }).join('');
+                }
+            }
+        } catch(e) {}
+
+        observeElements();
+    }
+
     // Initial reviews load if default active tab or on start
     loadReseñas();
+
+    // Initial Firestore sync
+    initFirestoreStorefront();
 
     // Initial observation
     observeElements();

@@ -137,14 +137,21 @@
             <span>Zonda Admin</span>
             <button class="btn-logout" onclick="handleLogout()">Cerrar Sesión</button>
         </h1>
-        <p style="color: var(--text-secondary); margin-bottom: 30px;">Panel de control interno de Zonda Streetwear</p>
+        <p style="color: var(--text-secondary); margin-bottom: 20px;">Panel de control interno de Zonda Streetwear</p>
 
-        <div id="backendStatusNotice" style="display: none; background: rgba(220, 39, 67, 0.12); border: 1px solid #dc2743; color: #ff8599; padding: 16px 20px; border-radius: 12px; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">
-            <strong>⚠️ Modo Solo Lectura (Alojamiento en Vercel):</strong><br>
-            Estás accediendo al panel desde la nube en Vercel, donde la web funciona como catálogo estático. Para subir fotos, modificar precios y guardar cambios permanentes en el código y catálogo:<br>
-            1. En tu computadora local, iniciá el servidor ejecutando: <code>python3 server.py</code><br>
-            2. Abrí el panel local en: <a href="http://localhost:8000/admin.html" target="_blank" style="color: #fff; font-weight: bold; text-decoration: underline;">http://localhost:8000/admin.html</a><br>
-            3. Guardá los cambios y luego ejecutá <code>git push</code> para actualizar Vercel automáticamente.
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 25px; flex-wrap: wrap;">
+            <div id="firebaseCloudBadge" style="background: rgba(37, 211, 102, 0.15); border: 1px solid #25D366; color: #25D366; padding: 7px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                <span id="firebaseStatusDot" style="display:inline-block; width:9px; height:9px; border-radius:50%; background:#25D366; box-shadow: 0 0 10px #25D366;"></span>
+                <span id="firebaseStatusText">Firebase Conectado (Nube)</span>
+            </div>
+            <button id="btnSyncFirebase" onclick="syncAllToFirebase()" style="background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; transition: all 0.2s;">
+                ☁️ Migrar / Sincronizar catálogo a Firebase
+            </button>
+        </div>
+
+        <div id="backendStatusNotice" style="display: none; background: rgba(37, 211, 102, 0.12); border: 1px solid #25D366; color: #76ebb0; padding: 16px 20px; border-radius: 12px; margin-bottom: 25px; font-size: 0.95rem; line-height: 1.6;">
+            <strong>🟢 Modo Nube Firebase Activado:</strong><br>
+            Tus cambios se guardan directamente en Firebase Firestore y se actualizan en tiempo real en la tienda online para todos tus clientes.
         </div>
 
         <div class="tabs">
@@ -153,6 +160,7 @@
             <div class="tab" onclick="switchTab('noticias')">Noticias</div>
             <div class="tab" onclick="switchTab('faq')">Preguntas Frecuentes</div>
             <div class="tab" onclick="switchTab('reseñas')">Reseñas</div>
+            <div class="tab" onclick="switchTab('pedidos')">Pedidos</div>
         </div>
 
         <!-- TAB LOOKBOOK -->
@@ -248,11 +256,26 @@
                 <div id="gallery_reseñas" class="admin-grid"></div>
             </div>
         </div>
+
+        <!-- TAB PEDIDOS -->
+        <div id="tab_pedidos" class="tab-content">
+            <div class="card">
+                <h2>Pedidos y Solicitudes de Compra</h2>
+                <p style="font-size: 0.9rem; color: #999;">Historial de pedidos recibidos desde la tienda online.</p>
+                <div id="gallery_pedidos" class="admin-grid"></div>
+            </div>
+        </div>
         
         <div style="text-align: center; margin-top: 40px;">
             <a href="/" style="color: var(--text-secondary); text-decoration: none;">Volver a la tienda</a>
         </div>
     </div>
+
+    <!-- Firebase CDN SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
+    <script src="firebase-init.js"></script>
 
     <script>
         // Hash SHA-256 de la contraseña 'Zonda202610' para autenticación tanto en local como en Vercel
@@ -332,10 +355,35 @@
             document.getElementById('loginOverlay').style.display = 'none';
             document.getElementById('adminDashboard').style.display = 'block';
 
-            const isVercel = window.location.hostname.includes('vercel.app') || sessionStorage.getItem('zonda_token') === 'session_vercel_authenticated';
+            const db = window.firebaseDb;
+            const badge = document.getElementById('firebaseCloudBadge');
+            const statusDot = document.getElementById('firebaseStatusDot');
+            const statusText = document.getElementById('firebaseStatusText');
             const notice = document.getElementById('backendStatusNotice');
-            if (notice) {
-                notice.style.display = isVercel ? 'block' : 'none';
+
+            if (db) {
+                if (badge) {
+                    badge.style.borderColor = '#25D366';
+                    badge.style.color = '#25D366';
+                    badge.style.background = 'rgba(37, 211, 102, 0.15)';
+                }
+                if (statusDot) statusDot.style.background = '#25D366';
+                if (statusText) statusText.innerText = 'Firebase Conectado (Nube)';
+                if (notice) {
+                    notice.style.display = 'block';
+                    notice.style.borderColor = '#25D366';
+                    notice.style.background = 'rgba(37, 211, 102, 0.12)';
+                    notice.style.color = '#76ebb0';
+                    notice.innerHTML = '<strong>🟢 Modo Nube Firebase Activo:</strong> Cualquier cambio o foto que subas se guardará directamente en la nube y se reflejará de inmediato en la tienda online para todos tus clientes.';
+                }
+            } else {
+                if (badge) {
+                    badge.style.borderColor = '#ffb703';
+                    badge.style.color = '#ffb703';
+                    badge.style.background = 'rgba(255, 183, 3, 0.15)';
+                }
+                if (statusDot) statusDot.style.background = '#ffb703';
+                if (statusText) statusText.innerText = 'Firebase Inicializando...';
             }
 
             loadGalleries();
@@ -360,7 +408,8 @@
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             if(event && event.target) event.target.classList.add('active');
-            document.getElementById('tab_' + tabId).classList.add('active');
+            const targetEl = document.getElementById('tab_' + tabId);
+            if (targetEl) targetEl.classList.add('active');
         }
 
         function showAlert(id, type, msg) {
@@ -382,181 +431,465 @@
                 .replace(/'/g, '&#39;');
         }
 
-        async function loadGalleries() {
-            // 1. Load Lookbook
-            try {
-                const resL = await fetch('/api/lookbook');
-                const dataL = await resL.json();
-                const galL = document.getElementById('gallery_lookbook');
-                galL.innerHTML = '';
-                dataL.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'admin-item';
-                    const safeDesc = escapeHTML(item.description || '');
-                    const safeSrc = encodeURI(item.src || '');
-                    div.innerHTML = `
-                        <img src="${safeSrc}" alt="Lookbook image">
-                        <input type="text" id="desc_${item.id}" value="${safeDesc}" placeholder="Sin descripción...">
-                        <div class="admin-item-actions">
-                            <button onclick="updateItem('lookbook', '${item.id}')">Guardar</button>
-                            <button class="danger" onclick="deleteItem('lookbook', '${item.id}')">Borrar</button>
-                        </div>
-                    `;
-                    galL.appendChild(div);
-                });
-            } catch(e) {}
+        function compressImage(file, maxWidth = 1000, maxHeight = 1200, quality = 0.82) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
 
-            // 2. Load Catalogo
-            try {
-                const resC = await fetch('/api/catalogo');
-                const dataC = await resC.json();
-                const galC = document.getElementById('gallery_catalogo');
-                galC.innerHTML = '';
-                dataC.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'admin-item';
-                    const safeTitle = escapeHTML(item.title || '');
-                    const safePrice = escapeHTML(item.price || '');
-                    const safeSrc = encodeURI(item.src || '');
-                    div.innerHTML = `
-                        <img src="${safeSrc}" alt="Catalogo">
-                        <input type="text" id="title_${item.id}" value="${safeTitle}" placeholder="Título">
-                        <input type="text" id="price_${item.id}" value="${safePrice}" placeholder="Precio">
-                        <div class="admin-item-actions">
-                            <button onclick="updateItem('catalogo', '${item.id}')">Guardar</button>
-                            <button class="danger" onclick="deleteItem('catalogo', '${item.id}')">Borrar</button>
-                        </div>
-                    `;
-                    galC.appendChild(div);
-                });
-            } catch(e) {}
-
-            // 3. Load Noticias
-            try {
-                const resN = await fetch('/api/noticias');
-                const dataN = await resN.json();
-                const galN = document.getElementById('gallery_noticias');
-                galN.innerHTML = '';
-                dataN.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'admin-item';
-                    let mediaPreview = '';
-                    if (item.media) {
-                        const safeMedia = encodeURI(item.media);
-                        if (item.media_type && item.media_type.includes('video')) {
-                            mediaPreview = `<video src="${safeMedia}" controls style="width:100%; height:180px; object-fit:cover; border-radius:4px;"></video>`;
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height = Math.round((height * maxWidth) / width);
+                                width = maxWidth;
+                            }
                         } else {
-                            mediaPreview = `<img src="${safeMedia}" alt="Noticia" style="width:100%; height:180px; object-fit:cover; border-radius:4px;">`;
+                            if (height > maxHeight) {
+                                width = Math.round((width * maxHeight) / height);
+                                height = maxHeight;
+                            }
                         }
+
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        const dataUrl = canvas.toDataURL('image/webp', quality);
+                        resolve(dataUrl);
+                    };
+                    img.onerror = reject;
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function uploadToStorageOrBase64(dataUrl, folderName, fileName) {
+            if (window.firebaseStorage) {
+                try {
+                    const storageRef = window.firebaseStorage.ref(`${folderName}/${Date.now()}_${fileName}`);
+                    await storageRef.putString(dataUrl, 'data_url');
+                    const downloadUrl = await storageRef.getDownloadURL();
+                    return downloadUrl;
+                } catch(stErr) {
+                    console.warn("Storage upload warning, using compressed DataURL in Firestore:", stErr);
+                }
+            }
+            return dataUrl;
+        }
+
+        function renderAdminLookbook(dataL) {
+            const galL = document.getElementById('gallery_lookbook');
+            if (!galL) return;
+            galL.innerHTML = '';
+            dataL.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'admin-item';
+                const safeDesc = escapeHTML(item.description || '');
+                const safeSrc = encodeURI(item.src || '');
+                div.innerHTML = `
+                    <img src="${safeSrc}" alt="Lookbook image">
+                    <input type="text" id="desc_${item.id}" value="${safeDesc}" placeholder="Sin descripción...">
+                    <div class="admin-item-actions">
+                        <button onclick="updateItem('lookbook', '${item.id}')">Guardar</button>
+                        <button class="danger" onclick="deleteItem('lookbook', '${item.id}')">Borrar</button>
+                    </div>
+                `;
+                galL.appendChild(div);
+            });
+        }
+
+        function renderAdminCatalogo(dataC) {
+            const galC = document.getElementById('gallery_catalogo');
+            if (!galC) return;
+            galC.innerHTML = '';
+            dataC.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'admin-item';
+                const safeTitle = escapeHTML(item.title || '');
+                const safePrice = escapeHTML(item.price || '');
+                const safeSrc = encodeURI(item.src || '');
+                div.innerHTML = `
+                    <img src="${safeSrc}" alt="Catalogo">
+                    <input type="text" id="title_${item.id}" value="${safeTitle}" placeholder="Título">
+                    <input type="text" id="price_${item.id}" value="${safePrice}" placeholder="Precio">
+                    <div class="admin-item-actions">
+                        <button onclick="updateItem('catalogo', '${item.id}')">Guardar</button>
+                        <button class="danger" onclick="deleteItem('catalogo', '${item.id}')">Borrar</button>
+                    </div>
+                `;
+                galC.appendChild(div);
+            });
+        }
+
+        function renderAdminNoticias(dataN) {
+            const galN = document.getElementById('gallery_noticias');
+            if (!galN) return;
+            galN.innerHTML = '';
+            dataN.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'admin-item';
+                let mediaPreview = '';
+                if (item.media) {
+                    const safeMedia = encodeURI(item.media);
+                    if (item.media_type && item.media_type.includes('video')) {
+                        mediaPreview = `<video src="${safeMedia}" controls style="width:100%; height:180px; object-fit:cover; border-radius:4px;"></video>`;
                     } else {
-                        mediaPreview = `<div style="width:100%; height:100px; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:#666; border-radius:4px;">Sin Multimedia</div>`;
+                        mediaPreview = `<img src="${safeMedia}" alt="Noticia" style="width:100%; height:180px; object-fit:cover; border-radius:4px;">`;
                     }
-                    const safeText = escapeHTML(item.text || '');
+                } else {
+                    mediaPreview = `<div style="width:100%; height:100px; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; color:#666; border-radius:4px;">Sin Multimedia</div>`;
+                }
+                const safeText = escapeHTML(item.text || '');
 
-                    div.innerHTML = `
-                        ${mediaPreview}
-                        <textarea id="news_text_${item.id}" style="height:70px; margin-bottom:5px;" placeholder="Texto de la noticia...">${safeText}</textarea>
-                        <p style="font-size:0.75rem; color:#888; margin:0;">Cambiar foto/video (opcional):</p>
-                        <input type="file" id="news_media_${item.id}" accept="image/*, video/mp4, video/webm" style="font-size:0.8rem;">
-                        <div class="admin-item-actions">
-                            <button onclick="updateNewsItem('${item.id}')">Guardar</button>
-                            <button class="danger" onclick="deleteItem('noticias', '${item.id}')">Borrar</button>
-                        </div>
-                    `;
-                    galN.appendChild(div);
-                });
+                div.innerHTML = `
+                    ${mediaPreview}
+                    <textarea id="news_text_${item.id}" style="height:70px; margin-bottom:5px;" placeholder="Texto de la noticia...">${safeText}</textarea>
+                    <p style="font-size:0.75rem; color:#888; margin:0;">Cambiar foto/video (opcional):</p>
+                    <input type="file" id="news_media_${item.id}" accept="image/*, video/mp4, video/webm" style="font-size:0.8rem;">
+                    <div class="admin-item-actions">
+                        <button onclick="updateNewsItem('${item.id}')">Guardar</button>
+                        <button class="danger" onclick="deleteItem('noticias', '${item.id}')">Borrar</button>
+                    </div>
+                `;
+                galN.appendChild(div);
+            });
+        }
+
+        function renderAdminFaq(dataF) {
+            const galF = document.getElementById('gallery_faq');
+            if (!galF) return;
+            galF.innerHTML = '';
+            dataF.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'admin-item';
+                const safeIcon = escapeHTML(item.icon || '❓');
+                const safeTitle = escapeHTML(item.title || '');
+                const safeCat = escapeHTML(item.category || '');
+                const safeContent = escapeHTML(item.content || '');
+
+                div.innerHTML = `
+                    <div style="display:flex; gap:10px;">
+                        <input type="text" id="faq_icon_${item.id}" value="${safeIcon}" style="width:60px;" placeholder="Icono">
+                        <input type="text" id="faq_title_${item.id}" value="${safeTitle}" placeholder="Título">
+                    </div>
+                    <input type="text" id="faq_cat_${item.id}" value="${safeCat}" placeholder="Categoría">
+                    <textarea id="faq_content_${item.id}" style="height:100px;" placeholder="Contenido...">${safeContent}</textarea>
+                    <div class="admin-item-actions">
+                        <button onclick="updateFaqItem('${item.id}')">Guardar</button>
+                        <button class="danger" onclick="deleteFaqItem('${item.id}')">Borrar</button>
+                    </div>
+                `;
+                galF.appendChild(div);
+            });
+        }
+
+        function renderAdminReseñas(dataR) {
+            const galR = document.getElementById('gallery_reseñas');
+            if (!galR) return;
+            galR.innerHTML = '';
+            dataR.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'admin-item';
+                const safeName = escapeHTML(item.name || '');
+                const safeComment = escapeHTML(item.comment || '');
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <input type="text" id="res_name_${item.id}" value="${safeName}" placeholder="Nombre Autor">
+                        <select id="res_rating_${item.id}" style="width:110px; margin-left:10px;">
+                            <option value="5" ${item.rating == 5 ? 'selected':''}>★ 5/5</option>
+                            <option value="4" ${item.rating == 4 ? 'selected':''}>★ 4/5</option>
+                            <option value="3" ${item.rating == 3 ? 'selected':''}>★ 3/5</option>
+                            <option value="2" ${item.rating == 2 ? 'selected':''}>★ 2/5</option>
+                            <option value="1" ${item.rating == 1 ? 'selected':''}>★ 1/5</option>
+                        </select>
+                    </div>
+                    <textarea id="res_comment_${item.id}" style="height:75px;" placeholder="Comentario...">${safeComment}</textarea>
+                    <div class="admin-item-actions">
+                        <button onclick="updateReseñaItem('${item.id}')">Guardar</button>
+                        <button class="danger" onclick="deleteReseñaItem('${item.id}')">Borrar</button>
+                    </div>
+                `;
+                galR.appendChild(div);
+            });
+        }
+
+        function renderAdminPedidos(pedidos) {
+            const galP = document.getElementById('gallery_pedidos');
+            if (!galP) return;
+            galP.innerHTML = '';
+            if (!pedidos || pedidos.length === 0) {
+                galP.innerHTML = '<p style="color: var(--text-secondary); grid-column: 1/-1;">No hay pedidos registrados todavía.</p>';
+                return;
+            }
+            pedidos.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'admin-item';
+                let dateStr = 'Fecha no registrada';
+                if (p.timestamp) {
+                    if (p.timestamp.toDate) dateStr = p.timestamp.toDate().toLocaleString('es-AR');
+                    else dateStr = String(p.timestamp);
+                }
+                div.innerHTML = `
+                    <div style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+                        <span style="font-size:0.75rem; color:#888;">${dateStr}</span>
+                        <h3 style="margin: 5px 0 0; color: #fff; font-size:1.05rem;">${escapeHTML(p.product_title || 'Prenda')}</h3>
+                        <span style="color: #25D366; font-weight:700;">${escapeHTML(p.product_price || '')}</span> - Talle: <strong>${escapeHTML(p.buyer_size || 'M')}</strong>
+                    </div>
+                    <div style="font-size:0.85rem; color: #ccc; line-height:1.4;">
+                        <p style="margin: 4px 0;"><strong>Cliente:</strong> ${escapeHTML(p.buyer_name || '')}</p>
+                        <p style="margin: 4px 0;"><strong>Teléfono:</strong> <a href="https://wa.me/${(p.buyer_phone||'').replace(/\D/g,'')}" target="_blank" style="color:#25D366;">${escapeHTML(p.buyer_phone || '')}</a></p>
+                        <p style="margin: 4px 0;"><strong>Dirección:</strong> ${escapeHTML(p.buyer_address || '')}</p>
+                        ${p.buyer_notes && p.buyer_notes !== 'Sin observaciones' ? `<p style="margin: 4px 0; font-style:italic;">"${escapeHTML(p.buyer_notes)}"</p>` : ''}
+                    </div>
+                    <div class="admin-item-actions" style="margin-top:auto;">
+                        <button class="danger" onclick="deletePedido('${p.id}')">Eliminar Pedido</button>
+                    </div>
+                `;
+                galP.appendChild(div);
+            });
+        }
+
+        async function loadGalleries() {
+            const db = window.firebaseDb;
+
+            // 1. Lookbook
+            try {
+                let lbData = [];
+                if (db) {
+                    try {
+                        const snap = await db.collection('lookbook').get();
+                        if (!snap.empty) {
+                            snap.forEach(doc => lbData.push({ id: doc.id, ...doc.data() }));
+                            lbData.sort((a,b) => (a.order || 0) - (b.order || 0));
+                        }
+                    } catch(e) {}
+                }
+                if (lbData.length === 0) {
+                    const resL = await fetch('/api/lookbook');
+                    lbData = await resL.json();
+                }
+                renderAdminLookbook(lbData);
             } catch(e) {}
 
-            // 4. Load FAQ
+            // 2. Catalogo
             try {
-                const resF = await fetch('/api/faq');
-                const dataF = await resF.json();
-                const galF = document.getElementById('gallery_faq');
-                galF.innerHTML = '';
-                dataF.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'admin-item';
-                    const safeIcon = escapeHTML(item.icon || '❓');
-                    const safeTitle = escapeHTML(item.title || '');
-                    const safeCat = escapeHTML(item.category || '');
-                    const safeContent = escapeHTML(item.content || '');
-
-                    div.innerHTML = `
-                        <div style="display:flex; gap:10px;">
-                            <input type="text" id="faq_icon_${item.id}" value="${safeIcon}" style="width:60px;" placeholder="Icono">
-                            <input type="text" id="faq_title_${item.id}" value="${safeTitle}" placeholder="Título">
-                        </div>
-                        <input type="text" id="faq_cat_${item.id}" value="${safeCat}" placeholder="Categoría">
-                        <textarea id="faq_content_${item.id}" style="height:100px;" placeholder="Contenido...">${safeContent}</textarea>
-                        <div class="admin-item-actions">
-                            <button onclick="updateFaqItem('${item.id}')">Guardar</button>
-                            <button class="danger" onclick="deleteFaqItem('${item.id}')">Borrar</button>
-                        </div>
-                    `;
-                    galF.appendChild(div);
-                });
+                let catData = [];
+                if (db) {
+                    try {
+                        const snap = await db.collection('catalogo').get();
+                        if (!snap.empty) {
+                            snap.forEach(doc => catData.push({ id: doc.id, ...doc.data() }));
+                            catData.sort((a,b) => (a.order || 0) - (b.order || 0));
+                        }
+                    } catch(e) {}
+                }
+                if (catData.length === 0) {
+                    const resC = await fetch('/api/catalogo');
+                    catData = await resC.json();
+                }
+                renderAdminCatalogo(catData);
             } catch(e) {}
 
-            // 5. Load Reseñas
+            // 3. Noticias
             try {
-                let resR = await fetch('/api/reseñas');
-                if (!resR.ok) resR = await fetch('reseñas.json');
-                const dataR = await resR.json();
-                const galR = document.getElementById('gallery_reseñas');
-                galR.innerHTML = '';
-                dataR.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'admin-item';
-                    const safeName = escapeHTML(item.name || '');
-                    const safeComment = escapeHTML(item.comment || '');
-                    div.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <input type="text" id="res_name_${item.id}" value="${safeName}" placeholder="Nombre Autor">
-                            <select id="res_rating_${item.id}" style="width:110px; margin-left:10px;">
-                                <option value="5" ${item.rating == 5 ? 'selected':''}>★ 5/5</option>
-                                <option value="4" ${item.rating == 4 ? 'selected':''}>★ 4/5</option>
-                                <option value="3" ${item.rating == 3 ? 'selected':''}>★ 3/5</option>
-                                <option value="2" ${item.rating == 2 ? 'selected':''}>★ 2/5</option>
-                                <option value="1" ${item.rating == 1 ? 'selected':''}>★ 1/5</option>
-                            </select>
-                        </div>
-                        <textarea id="res_comment_${item.id}" style="height:75px;" placeholder="Comentario...">${safeComment}</textarea>
-                        <div class="admin-item-actions">
-                            <button onclick="updateReseñaItem('${item.id}')">Guardar</button>
-                            <button class="danger" onclick="deleteReseñaItem('${item.id}')">Borrar</button>
-                        </div>
-                    `;
-                    galR.appendChild(div);
-                });
+                let newsData = [];
+                if (db) {
+                    try {
+                        const snap = await db.collection('noticias').get();
+                        if (!snap.empty) {
+                            snap.forEach(doc => newsData.push({ id: doc.id, ...doc.data() }));
+                        }
+                    } catch(e) {}
+                }
+                if (newsData.length === 0) {
+                    const resN = await fetch('/api/noticias');
+                    newsData = await resN.json();
+                }
+                renderAdminNoticias(newsData);
+            } catch(e) {}
+
+            // 4. FAQ
+            try {
+                let faqData = [];
+                if (db) {
+                    try {
+                        const snap = await db.collection('faq').get();
+                        if (!snap.empty) {
+                            snap.forEach(doc => faqData.push({ id: doc.id, ...doc.data() }));
+                        }
+                    } catch(e) {}
+                }
+                if (faqData.length === 0) {
+                    const resF = await fetch('/api/faq');
+                    faqData = await resF.json();
+                }
+                renderAdminFaq(faqData);
+            } catch(e) {}
+
+            // 5. Reseñas
+            try {
+                let resData = [];
+                if (db) {
+                    try {
+                        const snap = await db.collection('reseñas').get();
+                        if (!snap.empty) {
+                            snap.forEach(doc => resData.push({ id: doc.id, ...doc.data() }));
+                        }
+                    } catch(e) {}
+                }
+                if (resData.length === 0) {
+                    let resR = await fetch('/api/reseñas');
+                    if (!resR.ok) resR = await fetch('reseñas.json');
+                    resData = await resR.json();
+                }
+                renderAdminReseñas(resData);
+            } catch(e) {}
+
+            // 6. Pedidos
+            try {
+                if (db) {
+                    const snap = await db.collection('pedidos').get();
+                    let pedidosData = [];
+                    snap.forEach(doc => pedidosData.push({ id: doc.id, ...doc.data() }));
+                    renderAdminPedidos(pedidosData);
+                }
             } catch(e) {}
         }
 
-        const BACKEND_UNAVAILABLE_MSG = "No se pudo conectar con el servidor de guardado (server.py).\n\nEn Vercel el sitio funciona como catálogo estático (solo lectura). Para guardar cambios en el catálogo o subir fotos:\n1. Abrí la terminal y ejecutá 'python3 server.py'\n2. Entrá a http://localhost:8000/admin.html\n3. Guardá los cambios y subilos con git push.";
-
         async function updateItem(type, id) {
-            let body = { id: id };
+            let body = {};
             if (type === 'lookbook') body.description = document.getElementById('desc_' + id).value;
             if (type === 'catalogo') {
                 body.title = document.getElementById('title_' + id).value;
                 body.price = document.getElementById('price_' + id).value;
+            }
+
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection(type).doc(id).set(body, { merge: true });
+                    alert("¡Cambios guardados en Firebase con éxito!");
+                    loadGalleries();
+                    return;
+                } catch(fbErr) {
+                    alert("Error al guardar en Firebase: " + fbErr.message);
+                    return;
+                }
             }
             
             try {
                 const res = await authFetch(`/api/${type}/update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                    body: JSON.stringify({ id, ...body })
                 });
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const data = await res.json();
                 if (data.success) {
-                    alert("Cambios guardados correctamente.");
+                    alert("Cambios guardados en servidor local.");
                     loadGalleries();
-                } else {
-                    alert("Error al guardar: " + (data.error || 'error desconocido'));
                 }
             } catch(e) {
-                alert(BACKEND_UNAVAILABLE_MSG);
+                alert("No se pudo conectar con Firebase ni con el servidor local.");
+            }
+        }
+
+        async function deleteItem(type, id) {
+            if(!confirm("¿Estás seguro que deseas eliminar este elemento?")) return;
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection(type).doc(id).delete();
+                    alert("Elemento eliminado de Firebase.");
+                    loadGalleries();
+                    return;
+                } catch(fbErr) {
+                    alert("Error al eliminar en Firebase: " + fbErr.message);
+                    return;
+                }
+            }
+            try {
+                await authFetch(`/api/${type}/delete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                });
+                loadGalleries();
+            } catch(e) {}
+        }
+
+        async function deletePedido(id) {
+            if(!confirm("¿Eliminar este registro de pedido?")) return;
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('pedidos').doc(id).delete();
+                    loadGalleries();
+                } catch(e) {
+                    alert("Error: " + e.message);
+                }
+            }
+        }
+
+        async function uploadPhoto(type) {
+            const fileInput = document.getElementById(type + 'File');
+            const alertId = 'alert_' + type;
+            if(!fileInput.files[0]) return showAlert(alertId, 'error', 'Selecciona una foto primero.');
+            
+            const file = fileInput.files[0];
+            showAlert(alertId, 'success', 'Procesando y optimizando imagen...');
+
+            try {
+                const compressedDataUrl = await compressImage(file, 1000, 1200, 0.82);
+                const fileName = (type === 'catalogo' ? 'cat_' : 'lb_') + Date.now();
+                const imageUrl = await uploadToStorageOrBase64(compressedDataUrl, type, fileName);
+
+                const newId = (type === 'catalogo' ? 'cat_' : 'lb_') + Math.random().toString(36).substring(2, 9);
+                let itemDoc = {
+                    id: newId,
+                    src: imageUrl,
+                    order: Date.now()
+                };
+
+                if(type === 'lookbook') itemDoc.description = document.getElementById('lookbookDesc').value || '';
+                if(type === 'catalogo') {
+                    itemDoc.title = document.getElementById('catalogoTitle').value || 'Prenda Zonda';
+                    itemDoc.price = document.getElementById('catalogoPrice').value || '$30.000';
+                }
+
+                const db = window.firebaseDb;
+                if (db) {
+                    await db.collection(type).doc(newId).set(itemDoc);
+                    showAlert(alertId, 'success', '¡Prenda subida y publicada en Firebase con éxito!');
+                    fileInput.value = '';
+                    if (document.getElementById('lookbookDesc')) document.getElementById('lookbookDesc').value = '';
+                    if (document.getElementById('catalogoTitle')) document.getElementById('catalogoTitle').value = '';
+                    if (document.getElementById('catalogoPrice')) document.getElementById('catalogoPrice').value = '';
+                    loadGalleries();
+                    return;
+                }
+
+                // Fallback local server
+                const res = await authFetch(`/api/upload_${type}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(itemDoc)
+                });
+                const result = await res.json();
+                if(result.success) {
+                    showAlert(alertId, 'success', '¡Subido y procesado con éxito!');
+                    fileInput.value = '';
+                    loadGalleries();
+                } else {
+                    showAlert(alertId, 'error', 'Error: ' + result.error);
+                }
+            } catch(err) {
+                showAlert(alertId, 'error', 'Error al procesar: ' + err.message);
             }
         }
 
@@ -569,7 +902,7 @@
                 const file = fileInput.files[0];
                 const reader = new FileReader();
                 reader.onload = async function(e) {
-                    body.media = e.target.result.split(',')[1];
+                    body.media = e.target.result;
                     body.media_type = file.type;
                     await saveNewsUpdate(body);
                 };
@@ -580,198 +913,41 @@
         }
 
         async function saveNewsUpdate(body) {
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('noticias').doc(body.id).set(body, { merge: true });
+                    alert("Noticia actualizada en Firebase.");
+                    loadGalleries();
+                    return;
+                } catch(e) {
+                    alert("Error al actualizar en Firebase: " + e.message);
+                    return;
+                }
+            }
             try {
                 const res = await authFetch('/api/noticias/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const result = await res.json();
-                if (result.success) {
-                    alert("Noticia actualizada correctamente.");
+                if (res.ok) {
+                    alert("Noticia actualizada en servidor local.");
                     loadGalleries();
-                } else {
-                    alert("Error al actualizar: " + (result.error || "error desconocido"));
                 }
-            } catch(e) {
-                alert(BACKEND_UNAVAILABLE_MSG);
-            }
-        }
-
-        async function addFaqItem() {
-            const icon = document.getElementById('faqIcon').value;
-            const title = document.getElementById('faqTitle').value;
-            const category = document.getElementById('faqCategory').value;
-            const content = document.getElementById('faqContent').value;
-
-            if(!title || !content) return showAlert('alert_faq', 'error', 'El título y contenido son obligatorios.');
-
-            try {
-                const res = await authFetch('/api/faq/add', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ icon, title, category, content })
-                });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const result = await res.json();
-                if(result.success) {
-                    showAlert('alert_faq', 'success', '¡Pregunta Frecuente agregada con éxito!');
-                    document.getElementById('faqTitle').value = '';
-                    document.getElementById('faqContent').value = '';
-                    loadGalleries();
-                } else {
-                    showAlert('alert_faq', 'error', 'Error: ' + (result.error || 'error desconocido'));
-                }
-            } catch(e) {
-                showAlert('alert_faq', 'error', 'Error al conectar con el servidor.');
-            }
-        }
-
-        async function updateFaqItem(id) {
-            const icon = document.getElementById('faq_icon_' + id).value;
-            const title = document.getElementById('faq_title_' + id).value;
-            const category = document.getElementById('faq_cat_' + id).value;
-            const content = document.getElementById('faq_content_' + id).value;
-
-            try {
-                const res = await authFetch('/api/faq/update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, icon, title, category, content })
-                });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const data = await res.json();
-                if (data.success) {
-                    alert("Pregunta Frecuente actualizada.");
-                    loadGalleries();
-                } else {
-                    alert("Error: " + (data.error || 'error desconocido'));
-                }
-            } catch(e) {
-                alert(BACKEND_UNAVAILABLE_MSG);
-            }
-        }
-
-        async function deleteFaqItem(id) {
-            if(!confirm("¿Eliminar esta Pregunta Frecuente?")) return;
-            try {
-                const res = await authFetch('/api/faq/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                loadGalleries();
-            } catch(e) {
-                alert(BACKEND_UNAVAILABLE_MSG);
-            }
-        }
-
-        async function updateReseñaItem(id) {
-            const name = document.getElementById('res_name_' + id).value;
-            const rating = parseInt(document.getElementById('res_rating_' + id).value, 10);
-            const comment = document.getElementById('res_comment_' + id).value;
-
-            try {
-                const res = await authFetch('/api/reseñas/update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, name, rating, comment })
-                });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                const data = await res.json();
-                if (data.success) {
-                    alert("Reseña actualizada.");
-                    loadGalleries();
-                } else {
-                    alert("Error: " + (data.error || 'error desconocido'));
-                }
-            } catch(e) {
-                alert(BACKEND_UNAVAILABLE_MSG);
-            }
-        }
-
-        async function deleteReseñaItem(id) {
-            if(!confirm("¿Eliminar esta reseña?")) return;
-            try {
-                const res = await authFetch('/api/reseñas/delete', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                loadGalleries();
-            } catch(e) {
-                alert(BACKEND_UNAVAILABLE_MSG);
-            }
-        }
-
-        async function deleteItem(type, id) {
-            if(!confirm("¿Estás seguro que deseas eliminar este elemento?")) return;
-            try {
-                const res = await authFetch(`/api/${type}/delete`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: id })
-                });
-                if (!res.ok) throw new Error('HTTP ' + res.status);
-                loadGalleries();
-            } catch(e) {
-                alert(BACKEND_UNAVAILABLE_MSG);
-            }
-        }
-
-        async function uploadPhoto(type) {
-            const fileInput = document.getElementById(type + 'File');
-            const alertId = 'alert_' + type;
-            if(!fileInput.files[0]) return showAlert(alertId, 'error', 'Selecciona una foto primero.');
-            
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            
-            reader.onload = async function(e) {
-                const base64Data = e.target.result.split(',')[1];
-                let body = { image: base64Data };
-                
-                if(type === 'lookbook') body.description = document.getElementById('lookbookDesc').value;
-                if(type === 'catalogo') {
-                    body.title = document.getElementById('catalogoTitle').value;
-                    body.price = document.getElementById('catalogoPrice').value;
-                }
-                
-                try {
-                    const res = await authFetch(`/api/upload_${type}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(body)
-                    });
-                    const result = await res.json();
-                    if(result.success) {
-                        showAlert(alertId, 'success', '¡Subido y procesado con éxito!');
-                        fileInput.value = '';
-                        loadGalleries();
-                    } else {
-                        showAlert(alertId, 'error', 'Error: ' + result.error);
-                    }
-                } catch(err) {
-                    showAlert(alertId, 'error', 'Error de conexión.');
-                }
-            };
-            reader.readAsDataURL(file);
+            } catch(e) {}
         }
 
         async function updateNews() {
             const text = document.getElementById('newsText').value;
             const fileInput = document.getElementById('newsMedia');
-            
             let body = { text: text };
-            
+
             if (fileInput.files[0]) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
                 reader.onload = async function(e) {
-                    body.media = e.target.result.split(',')[1];
+                    body.media = e.target.result;
                     body.media_type = file.type;
                     sendNews(body);
                 };
@@ -783,11 +959,29 @@
 
         async function sendNews(body) {
             if(!body.text && !body.media) return showAlert('alert_news', 'error', 'Agrega un texto o un archivo.');
+            const newId = 'news_' + Math.random().toString(36).substring(2, 9);
+            const newsDoc = { id: newId, date: new Date().toLocaleDateString('es-AR'), ...body };
+
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('noticias').doc(newId).set(newsDoc);
+                    showAlert('alert_news', 'success', '¡Noticia publicada en Firebase!');
+                    document.getElementById('newsText').value = '';
+                    document.getElementById('newsMedia').value = '';
+                    loadGalleries();
+                    return;
+                } catch(e) {
+                    showAlert('alert_news', 'error', 'Error en Firebase: ' + e.message);
+                    return;
+                }
+            }
+
             try {
                 const res = await authFetch('/api/upload_noticias', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                    body: JSON.stringify(newsDoc)
                 });
                 const result = await res.json();
                 if(result.success) {
@@ -795,11 +989,234 @@
                     document.getElementById('newsText').value = '';
                     document.getElementById('newsMedia').value = '';
                     loadGalleries();
-                } else {
-                    showAlert('alert_news', 'error', 'Error: ' + result.error);
                 }
             } catch(err) {
                 showAlert('alert_news', 'error', 'Error de conexión.');
+            }
+        }
+
+        async function addFaqItem() {
+            const icon = document.getElementById('faqIcon').value || '❓';
+            const title = document.getElementById('faqTitle').value;
+            const category = document.getElementById('faqCategory').value || 'General';
+            const content = document.getElementById('faqContent').value;
+
+            if(!title || !content) return showAlert('alert_faq', 'error', 'El título y contenido son obligatorios.');
+
+            const newId = 'faq_' + Math.random().toString(36).substring(2, 9);
+            const item = { id: newId, icon, title, category, content };
+
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('faq').doc(newId).set(item);
+                    showAlert('alert_faq', 'success', '¡Pregunta agregada a Firebase!');
+                    document.getElementById('faqTitle').value = '';
+                    document.getElementById('faqContent').value = '';
+                    loadGalleries();
+                    return;
+                } catch(e) {
+                    showAlert('alert_faq', 'error', 'Error en Firebase: ' + e.message);
+                    return;
+                }
+            }
+
+            try {
+                const res = await authFetch('/api/faq/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(item)
+                });
+                if (res.ok) {
+                    showAlert('alert_faq', 'success', '¡Pregunta Frecuente agregada con éxito!');
+                    document.getElementById('faqTitle').value = '';
+                    document.getElementById('faqContent').value = '';
+                    loadGalleries();
+                }
+            } catch(e) {}
+        }
+
+        async function updateFaqItem(id) {
+            const icon = document.getElementById('faq_icon_' + id).value;
+            const title = document.getElementById('faq_title_' + id).value;
+            const category = document.getElementById('faq_cat_' + id).value;
+            const content = document.getElementById('faq_content_' + id).value;
+            const item = { icon, title, category, content };
+
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('faq').doc(id).set(item, { merge: true });
+                    alert("Pregunta Frecuente actualizada en Firebase.");
+                    loadGalleries();
+                    return;
+                } catch(e) {
+                    alert("Error: " + e.message);
+                    return;
+                }
+            }
+            try {
+                await authFetch('/api/faq/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, ...item })
+                });
+                loadGalleries();
+            } catch(e) {}
+        }
+
+        async function deleteFaqItem(id) {
+            if(!confirm("¿Eliminar esta Pregunta Frecuente?")) return;
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('faq').doc(id).delete();
+                    loadGalleries();
+                    return;
+                } catch(e) {}
+            }
+            try {
+                await authFetch('/api/faq/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                loadGalleries();
+            } catch(e) {}
+        }
+
+        async function updateReseñaItem(id) {
+            const name = document.getElementById('res_name_' + id).value;
+            const rating = parseInt(document.getElementById('res_rating_' + id).value, 10);
+            const comment = document.getElementById('res_comment_' + id).value;
+            const item = { name, rating, comment };
+
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('reseñas').doc(id).set(item, { merge: true });
+                    alert("Reseña actualizada en Firebase.");
+                    loadGalleries();
+                    return;
+                } catch(e) {
+                    alert("Error: " + e.message);
+                    return;
+                }
+            }
+            try {
+                await authFetch('/api/reseñas/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, ...item })
+                });
+                loadGalleries();
+            } catch(e) {}
+        }
+
+        async function deleteReseñaItem(id) {
+            if(!confirm("¿Eliminar esta reseña?")) return;
+            const db = window.firebaseDb;
+            if (db) {
+                try {
+                    await db.collection('reseñas').doc(id).delete();
+                    loadGalleries();
+                    return;
+                } catch(e) {}
+            }
+            try {
+                await authFetch('/api/reseñas/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                loadGalleries();
+            } catch(e) {}
+        }
+
+        async function syncAllToFirebase() {
+            const db = window.firebaseDb;
+            if (!db) {
+                alert("Firebase no está disponible. Verificá que la consola de Firebase tenga Firestore activado.");
+                return;
+            }
+            const btn = document.getElementById('btnSyncFirebase');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerText = "⏳ Sincronizando datos a Firebase...";
+            }
+
+            try {
+                let totalSynced = 0;
+
+                // 1. Catalogo
+                const resCat = await fetch('/api/catalogo');
+                const catItems = await resCat.json();
+                for (let i = 0; i < catItems.length; i++) {
+                    const item = catItems[i];
+                    const id = item.id || ('cat_' + i);
+                    await db.collection('catalogo').doc(id).set({
+                        ...item,
+                        id: id,
+                        order: i
+                    }, { merge: true });
+                    totalSynced++;
+                }
+
+                // 2. Lookbook
+                const resLb = await fetch('/api/lookbook');
+                const lbItems = await resLb.json();
+                for (let i = 0; i < lbItems.length; i++) {
+                    const item = lbItems[i];
+                    const id = item.id || ('lb_' + i);
+                    await db.collection('lookbook').doc(id).set({
+                        ...item,
+                        id: id,
+                        order: i
+                    }, { merge: true });
+                    totalSynced++;
+                }
+
+                // 3. Noticias
+                const resNews = await fetch('/api/noticias');
+                const newsItems = await resNews.json();
+                for (let i = 0; i < newsItems.length; i++) {
+                    const item = newsItems[i];
+                    const id = item.id || ('news_' + i);
+                    await db.collection('noticias').doc(id).set(item, { merge: true });
+                    totalSynced++;
+                }
+
+                // 4. FAQ
+                const resFaq = await fetch('/api/faq');
+                const faqItems = await resFaq.json();
+                for (let i = 0; i < faqItems.length; i++) {
+                    const item = faqItems[i];
+                    const id = item.id || ('faq_' + i);
+                    await db.collection('faq').doc(id).set(item, { merge: true });
+                    totalSynced++;
+                }
+
+                // 5. Reseñas
+                let resRev = await fetch('/api/reseñas');
+                if (!resRev.ok) resRev = await fetch('reseñas.json');
+                const revItems = await resRev.json();
+                for (let i = 0; i < revItems.length; i++) {
+                    const item = revItems[i];
+                    const id = item.id || ('res_' + i);
+                    await db.collection('reseñas').doc(id).set(item, { merge: true });
+                    totalSynced++;
+                }
+
+                alert(`¡Sincronización completada con éxito! Se migraron ${totalSynced} elementos a Firebase Firestore.`);
+                loadGalleries();
+            } catch(err) {
+                console.error("Sync error:", err);
+                alert("Ocurrió un error al sincronizar con Firebase: " + err.message + "\n\nAsegurate de que Firestore esté habilitado en la consola de Firebase con reglas de lectura y escritura permitidas.");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = "☁️ Migrar / Sincronizar catálogo a Firebase";
+                }
             }
         }
     </script>
