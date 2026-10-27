@@ -100,16 +100,16 @@ document.addEventListener('DOMContentLoaded', () => {
     async function refreshNoticias() {
         try {
             let data = [];
+            let fromDb = false;
             const db = window.firebaseDb;
             if (db) {
                 try {
                     const snap = await db.collection('noticias').get();
-                    if (!snap.empty) {
-                        snap.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
-                    }
+                    snap.forEach(doc => data.push({ id: doc.id, ...doc.data() }));
+                    fromDb = true;
                 } catch(e) {}
             }
-            if (!data || data.length === 0) {
+            if (!fromDb) {
                 const res = await fetch('/api/noticias?_t=' + Date.now());
                 if (res.ok) data = await res.json();
             }
@@ -118,7 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!data || data.length === 0) {
                 const emptyMsg = document.createElement('p');
-                emptyMsg.style.cssText = 'color: var(--text-secondary); grid-column: 1/-1;';
+                emptyMsg.style.cssText = 'color: var(--text-secondary); grid-column: 1/-1; text-align: center; padding: 40px;';
                 emptyMsg.textContent = 'No hay noticias o promociones activas por el momento.';
                 grid.replaceChildren(emptyMsg);
                 return;
@@ -1087,6 +1087,62 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, (err) => {
                 console.warn("Firestore snapshot lookbook:", err);
+            });
+        } catch(e) {}
+
+        // 3. Escucha en tiempo real de Noticias (onSnapshot)
+        try {
+            db.collection('noticias').onSnapshot((snap) => {
+                let newsList = [];
+                snap.forEach(doc => newsList.push({ id: doc.id, ...doc.data() }));
+                const grid = document.querySelector('#tab-noticias .news-grid');
+                if (grid) {
+                    if (newsList.length === 0) {
+                        grid.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1; text-align:center; padding:40px;">No hay noticias o promociones activas por el momento.</p>';
+                    } else {
+                        grid.innerHTML = newsList.map(item => {
+                            let mediaHtml = '';
+                            if (item.media) {
+                                const safeSrc = encodeURI(item.media);
+                                if (item.media_type && item.media_type.includes('video')) {
+                                    mediaHtml = `<div class="news-media"><video src="${safeSrc}" autoplay loop muted playsinline style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></video></div>`;
+                                } else {
+                                    mediaHtml = `<div class="news-media"><img src="${safeSrc}" alt="Noticia Zonda" loading="lazy" style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></div>`;
+                                }
+                            }
+                            const safeText = escapeHTML(item.text || '');
+                            let textHtml = safeText ? `<div class="news-body" style="padding: 22px;"><p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.6; margin:0;">${safeText}</p></div>` : '';
+                            return `<article class="news-card visible" data-id="${escapeHTML(item.id || '')}">${mediaHtml}${textHtml}</article>`;
+                        }).join('');
+                    }
+                    observeElements();
+                }
+            }, (err) => {
+                console.warn("Firestore snapshot noticias:", err);
+            });
+        } catch(e) {}
+
+        // 4. Escucha en tiempo real de FAQ (onSnapshot)
+        try {
+            db.collection('faq').onSnapshot((snap) => {
+                let faqList = [];
+                snap.forEach(doc => faqList.push({ id: doc.id, ...doc.data() }));
+                const container = document.querySelector('#tab-faq .faq-container');
+                if (container && faqList.length > 0) {
+                    container.innerHTML = faqList.map(item => `
+                        <div class="faq-card" data-id="${escapeHTML(item.id || '')}">
+                            <div class="faq-header">
+                                <span class="faq-icon">${escapeHTML(item.icon || '❓')}</span>
+                                <h3>${escapeHTML(item.title || '')}</h3>
+                            </div>
+                            <div class="faq-body">
+                                ${item.content || ''}
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }, (err) => {
+                console.warn("Firestore snapshot faq:", err);
             });
         } catch(e) {}
     }
