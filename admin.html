@@ -275,7 +275,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
-    <script src="firebase-init.js"></script>
+    <script src="firebase-init.js?v=2.2"></script>
 
     <script>
         // Hash SHA-256 de la contraseña 'Zonda202610' para autenticación tanto en local como en Vercel
@@ -660,16 +660,16 @@
             // 1. Lookbook
             try {
                 let lbData = [];
+                let lbFromDb = false;
                 if (db) {
                     try {
                         const snap = await db.collection('lookbook').get();
-                        if (!snap.empty) {
-                            snap.forEach(doc => lbData.push({ id: doc.id, ...doc.data() }));
-                            lbData.sort((a,b) => (a.order || 0) - (b.order || 0));
-                        }
+                        snap.forEach(doc => lbData.push({ id: doc.id, ...doc.data() }));
+                        lbData.sort((a,b) => (a.order || 0) - (b.order || 0));
+                        lbFromDb = true;
                     } catch(e) {}
                 }
-                if (lbData.length === 0) {
+                if (!lbFromDb) {
                     const resL = await fetch('/api/lookbook');
                     lbData = await resL.json();
                 }
@@ -679,16 +679,16 @@
             // 2. Catalogo
             try {
                 let catData = [];
+                let catFromDb = false;
                 if (db) {
                     try {
                         const snap = await db.collection('catalogo').get();
-                        if (!snap.empty) {
-                            snap.forEach(doc => catData.push({ id: doc.id, ...doc.data() }));
-                            catData.sort((a,b) => (a.order || 0) - (b.order || 0));
-                        }
+                        snap.forEach(doc => catData.push({ id: doc.id, ...doc.data() }));
+                        catData.sort((a,b) => (a.order || 0) - (b.order || 0));
+                        catFromDb = true;
                     } catch(e) {}
                 }
-                if (catData.length === 0) {
+                if (!catFromDb) {
                     const resC = await fetch('/api/catalogo');
                     catData = await resC.json();
                 }
@@ -698,15 +698,15 @@
             // 3. Noticias
             try {
                 let newsData = [];
+                let newsFromDb = false;
                 if (db) {
                     try {
                         const snap = await db.collection('noticias').get();
-                        if (!snap.empty) {
-                            snap.forEach(doc => newsData.push({ id: doc.id, ...doc.data() }));
-                        }
+                        snap.forEach(doc => newsData.push({ id: doc.id, ...doc.data() }));
+                        newsFromDb = true;
                     } catch(e) {}
                 }
-                if (newsData.length === 0) {
+                if (!newsFromDb) {
                     const resN = await fetch('/api/noticias');
                     newsData = await resN.json();
                 }
@@ -716,15 +716,15 @@
             // 4. FAQ
             try {
                 let faqData = [];
+                let faqFromDb = false;
                 if (db) {
                     try {
                         const snap = await db.collection('faq').get();
-                        if (!snap.empty) {
-                            snap.forEach(doc => faqData.push({ id: doc.id, ...doc.data() }));
-                        }
+                        snap.forEach(doc => faqData.push({ id: doc.id, ...doc.data() }));
+                        faqFromDb = true;
                     } catch(e) {}
                 }
-                if (faqData.length === 0) {
+                if (!faqFromDb) {
                     const resF = await fetch('/api/faq');
                     faqData = await resF.json();
                 }
@@ -734,15 +734,15 @@
             // 5. Reseñas
             try {
                 let resData = [];
+                let resFromDb = false;
                 if (db) {
                     try {
                         const snap = await db.collection('reseñas').get();
-                        if (!snap.empty) {
-                            snap.forEach(doc => resData.push({ id: doc.id, ...doc.data() }));
-                        }
+                        snap.forEach(doc => resData.push({ id: doc.id, ...doc.data() }));
+                        resFromDb = true;
                     } catch(e) {}
                 }
-                if (resData.length === 0) {
+                if (!resFromDb) {
                     let resR = await fetch('/api/reseñas');
                     if (!resR.ok) resR = await fetch('reseñas.json');
                     resData = await resR.json();

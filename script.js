@@ -1028,57 +1028,67 @@ document.addEventListener('DOMContentLoaded', () => {
     history.pushState({ tab: startTab, isReady: true }, '', '#' + startTab);
     switchTab(startTab, false);
 
-    async function initFirestoreStorefront() {
+    function initFirestoreStorefront() {
         const db = window.firebaseDb;
         if (!db) return;
 
-        // 1. Sync Catalogo from Firestore if available
+        // 1. Escucha en tiempo real de Catalogo (onSnapshot)
         try {
-            const catSnap = await db.collection('catalogo').get();
-            if (!catSnap.empty) {
+            db.collection('catalogo').onSnapshot((snap) => {
                 let catList = [];
-                catSnap.forEach(doc => catList.push({ id: doc.id, ...doc.data() }));
+                snap.forEach(doc => catList.push({ id: doc.id, ...doc.data() }));
                 catList.sort((a,b) => (a.order || 0) - (b.order || 0));
                 const catGrid = document.querySelector('#tab-catalogo .products-grid') || document.querySelector('.products-grid');
-                if (catGrid && catList.length > 0) {
-                    catGrid.innerHTML = catList.map(item => `
-                        <article class="product-card">
-                            <div class="product-img">
-                                <img src="${encodeURI(item.src || '')}" alt="${escapeHTML(item.title || '')}" loading="lazy">
-                            </div>
-                            <div class="product-info">
-                                <h3>${escapeHTML(item.title || '')}</h3>
-                                <p class="price">${escapeHTML(item.price || '')}</p>
-                            </div>
-                        </article>
-                    `).join('');
+                if (catGrid) {
+                    if (catList.length === 0) {
+                        catGrid.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1; text-align:center; padding:40px;">No hay productos disponibles actualmente.</p>';
+                    } else {
+                        catGrid.innerHTML = catList.map(item => `
+                            <article class="product-card" data-id="${escapeHTML(item.id || '')}">
+                                <div class="product-img">
+                                    <img src="${encodeURI(item.src || '')}" alt="${escapeHTML(item.title || '')}" loading="lazy">
+                                </div>
+                                <div class="product-info">
+                                    <h3>${escapeHTML(item.title || '')}</h3>
+                                    <p class="price">${escapeHTML(item.price || '')}</p>
+                                </div>
+                            </article>
+                        `).join('');
+                    }
+                    observeElements();
                 }
-            }
+            }, (err) => {
+                console.warn("Firestore snapshot catalogo:", err);
+            });
         } catch(e) {}
 
-        // 2. Sync Lookbook from Firestore if available
+        // 2. Escucha en tiempo real de Lookbook (onSnapshot)
         try {
-            const lbSnap = await db.collection('lookbook').get();
-            if (!lbSnap.empty) {
+            db.collection('lookbook').onSnapshot((snap) => {
                 let lbList = [];
-                lbSnap.forEach(doc => lbList.push({ id: doc.id, ...doc.data() }));
+                snap.forEach(doc => lbList.push({ id: doc.id, ...doc.data() }));
                 lbList.sort((a,b) => (a.order || 0) - (b.order || 0));
                 const lbGrid = document.querySelector('#tab-lookbook .lookbook-grid') || document.querySelector('.lookbook-grid');
-                if (lbGrid && lbList.length > 0) {
-                    lbGrid.innerHTML = lbList.map(item => {
-                        const descHtml = item.description ? `<div class="product-info" style="pointer-events:none;"><h3 style="font-size:0.9rem;">${escapeHTML(item.description)}</h3></div>` : '';
-                        return `
-                            <article class="lookbook-item" style="position:relative;">
-                                <img src="${encodeURI(item.src || '')}" alt="Modelo Zonda" loading="lazy">
-                                ${descHtml}
-                            </article>
-                        `;
-                    }).join('');
+                if (lbGrid) {
+                    if (lbList.length === 0) {
+                        lbGrid.innerHTML = '<p style="color:var(--text-secondary); grid-column:1/-1; text-align:center; padding:40px;">No hay modelos disponibles actualmente.</p>';
+                    } else {
+                        lbGrid.innerHTML = lbList.map(item => {
+                            const descHtml = item.description ? `<div class="product-info" style="pointer-events:none;"><h3 style="font-size:0.9rem;">${escapeHTML(item.description)}</h3></div>` : '';
+                            return `
+                                <article class="lookbook-item" data-id="${escapeHTML(item.id || '')}" style="position:relative;">
+                                    <img src="${encodeURI(item.src || '')}" alt="Modelo Zonda" loading="lazy">
+                                    ${descHtml}
+                                </article>
+                            `;
+                        }).join('');
+                    }
+                    observeElements();
                 }
-            }
+            }, (err) => {
+                console.warn("Firestore snapshot lookbook:", err);
+            });
         } catch(e) {}
-
-        observeElements();
     }
 
     // Initial reviews load if default active tab or on start
