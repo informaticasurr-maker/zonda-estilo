@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.innerHTML = data.map(item => {
                 let mediaHtml = '';
                 if (item.media) {
-                    const safeSrc = encodeURI(item.media);
+                    const safeSrc = safeImageSrc(item.media);
                     if (item.media_type && item.media_type.includes('video')) {
                         mediaHtml = `<div class="news-media"><video src="${safeSrc}" autoplay loop muted playsinline style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></video></div>`;
                     } else {
@@ -1028,6 +1028,28 @@ document.addEventListener('DOMContentLoaded', () => {
     history.pushState({ tab: startTab, isReady: true }, '', '#' + startTab);
     switchTab(startTab, false);
 
+    function safeImageSrc(src) {
+        if (!src) return '';
+        if (src.startsWith('data:') || src.startsWith('blob:') || src.startsWith('http://') || src.startsWith('https://')) return src;
+        try {
+            let decoded = src;
+            for (let i = 0; i < 3; i++) {
+                if (decoded.includes('%')) {
+                    try {
+                        decoded = decodeURIComponent(decoded);
+                    } catch(e) {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+            return encodeURI(decoded);
+        } catch(e) {
+            return src;
+        }
+    }
+
     function initFirestoreStorefront() {
         const db = window.firebaseDb;
         if (!db) return;
@@ -1046,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         catGrid.innerHTML = catList.map(item => `
                             <article class="product-card" data-id="${escapeHTML(item.id || '')}">
                                 <div class="product-img">
-                                    <img src="${encodeURI(item.src || '')}" alt="${escapeHTML(item.title || '')}" loading="lazy">
+                                    <img src="${safeImageSrc(item.src || '')}" alt="${escapeHTML(item.title || '')}" loading="lazy">
                                 </div>
                                 <div class="product-info">
                                     <h3>${escapeHTML(item.title || '')}</h3>
@@ -1077,7 +1099,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const descHtml = item.description ? `<div class="product-info" style="pointer-events:none;"><h3 style="font-size:0.9rem;">${escapeHTML(item.description)}</h3></div>` : '';
                             return `
                                 <article class="lookbook-item" data-id="${escapeHTML(item.id || '')}" style="position:relative;">
-                                    <img src="${encodeURI(item.src || '')}" alt="Modelo Zonda" loading="lazy">
+                                    <img src="${safeImageSrc(item.src || '')}" alt="Modelo Zonda" loading="lazy">
                                     ${descHtml}
                                 </article>
                             `;
@@ -1103,7 +1125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         grid.innerHTML = newsList.map(item => {
                             let mediaHtml = '';
                             if (item.media) {
-                                const safeSrc = encodeURI(item.media);
+                                const safeSrc = safeImageSrc(item.media);
                                 if (item.media_type && item.media_type.includes('video')) {
                                     mediaHtml = `<div class="news-media"><video src="${safeSrc}" autoplay loop muted playsinline style="width:100%; height:320px; object-fit:cover; border-radius:12px 12px 0 0; display:block;"></video></div>`;
                                 } else {
