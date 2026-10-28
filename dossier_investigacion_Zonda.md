@@ -1,12 +1,12 @@
 # 📊 Dossier de Inteligencia y Viabilidad de Proyecto: Zonda
-**Fecha:** 2026-10-02 | **Ubicación:** Mendoza, Argentina (Inferido por código de área 261)
+**Fecha:** 2026-10-02 | **Ubicación:** Puerto Madryn, Chubut, Patagonia Argentina
 **Agente Investigador:** ag-market-scout-05 ("El Explorador de Mercado")
 
 ---
 
 ## 1. 📍 Contexto Geográfico y Mercado Objetivo
-- **Localidad / Radio:** Gran Mendoza y envíos a todo el país.
-- **Provincia / Región:** Mendoza.
+- **Localidad / Radio:** Puerto Madryn y envíos a todo el país.
+- **Provincia / Región:** Chubut (Patagonia).
 - **País:** Argentina.
 - **Perfil del Cliente / Usuario:** Público joven y adulto joven, interesados en moda urbana (remeras y buzos), usuarios activos de Instagram y WhatsApp.
 
@@ -14,8 +14,8 @@
 
 ## 2. ⚖️ Marco Legal, Derechos y Obligaciones
 - **Nivel Nacional:** Ley de Defensa del Consumidor (Ley 24.240), normativas de comercio electrónico y protección de datos personales. AFIP (Régimen simplificado/Monotributo o Responsable Inscripto).
-- **Nivel Provincial:** ATM (Administración Tributaria Mendoza) para Ingresos Brutos.
-- **Nivel Municipal / Local:** Habilitación municipal si existe local físico o showroom.
+- **Nivel Provincial:** DGR Chubut (Dirección General de Rentas de Chubut) para Ingresos Brutos.
+- **Nivel Municipal / Local:** Habilitación municipal de la Municipalidad de Puerto Madryn si existe local físico o showroom.
 - **Obligaciones del Negocio vs. Derechos del Consumidor:** Mostrar precios claros, políticas de cambio y devolución accesibles (botón de arrepentimiento exigido por ley nacional para e-commerce).
 
 ---

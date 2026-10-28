@@ -12,7 +12,7 @@
 ## 2. 📍 Contacto & Ubicación
 - **WhatsApp / Teléfono:** +54 9 261 746-2601
 - **Email:** [A solicitar]
-- **Dirección:** Mendoza, Argentina (Inferido por código de área, a confirmar ubicación física si aplica)
+- **Dirección:** Puerto Madryn, Chubut, Patagonia Argentina.
 - **Google Maps Link:** [N/A o a solicitar si hay showroom]
 
 ## 3. ⏰ Horarios & Credenciales

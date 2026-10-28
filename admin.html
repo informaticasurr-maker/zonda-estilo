@@ -275,7 +275,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-storage-compat.js"></script>
-    <script src="firebase-init.js?v=2.3"></script>
+    <script src="firebase-init.js?v=2.4"></script>
 
     <script>
         // Hash SHA-256 de la contraseña 'Zonda202610' para autenticación tanto en local como en Vercel
@@ -1209,7 +1209,8 @@
                 }
 
                 // 4. FAQ
-                const resFaq = await fetch('/api/faq');
+                let resFaq = await fetch('/api/faq');
+                if (!resFaq.ok) resFaq = await fetch('faq.json');
                 const faqItems = await resFaq.json();
                 for (let i = 0; i < faqItems.length; i++) {
                     const item = faqItems[i];

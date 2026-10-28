@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: "res_002", name: "Lucas M.", rating: 5, date: "10 Oct 2026", comment: "La calidad del algodón 24/1 es tremenda, tela pesada y resistente como me gusta. 100% recomendado." },
         { id: "res_003", name: "Joaquín B.", rating: 5, date: "08 Oct 2026", comment: "El buzo con friza superó todas mis expectativas. Es súper abrigado, pesado y la capucha tiene una estructura genial. La mejor compra." },
         { id: "res_004", name: "Camila V.", rating: 5, date: "05 Oct 2026", comment: "Compré la remera oversize negra y me sorprendió el grosor de la tela. Caída perfecta para armar outfits urbanos. ¡La rompieron!" },
-        { id: "res_005", name: "Facundo D.", rating: 5, date: "02 Oct 2026", comment: "Atención de 10 por WhatsApp, coordinamos la entrega al toque en Mendoza. El estampado serigráfico tiene un relieve y durabilidad de primera." },
+        { id: "res_005", name: "Facundo D.", rating: 5, date: "02 Oct 2026", comment: "Atención de 10 por WhatsApp, coordinamos la entrega al toque en Puerto Madryn. El estampado serigráfico tiene un relieve y durabilidad de primera." },
         { id: "res_006", name: "Sofía R.", rating: 5, date: "29 Sep 2026", comment: "Llegó súper rápido y la atención fue genial. La remera es hermosísima, no destiñe nada al lavarla." },
         { id: "res_007", name: "Agustina L.", rating: 4, date: "26 Sep 2026", comment: "Excelente relación precio-calidad. El talle M me quedó justo el oversize que buscaba. Muy buena confección en las costuras." },
         { id: "res_008", name: "Gabriel T.", rating: 5, date: "23 Sep 2026", comment: "Impresionante la estampa y el grosor de la tela. No se achica para nada con los lavados continuos." },
